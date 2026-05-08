@@ -112,3 +112,11 @@ input:focus, select:focus, textarea:focus {
   );
   height: 10px;
 }
+/* Tabla y tbody ocupan todo el ancho */
+.tabla-pedido table {
+  width: 100%;
+}
+
+.tabla-pedido tbody {
+  width: 100%;
+}
