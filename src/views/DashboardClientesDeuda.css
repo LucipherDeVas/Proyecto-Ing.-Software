@@ -1,0 +1,102 @@
+/* Sobrescribe el ancho del contenedor base solo para el dashboard */
+.dc-container {
+  max-width: 1200px;
+}
+
+.dc-controles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: stretch;
+  margin-bottom: 1.25rem;
+}
+
+.dc-input {
+  flex: 1 1 220px;
+  padding: 0.65rem 0.85rem;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.dc-input:focus {
+  border-color: #2b6cb0;
+}
+
+.dc-btn-recargar {
+  flex: 0 0 auto;
+  padding: 0.65rem 1.25rem;
+}
+
+.dc-tabla-wrap {
+  overflow-x: auto;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.dc-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.dc-tabla thead th {
+  background: #f5f7fa;
+  text-align: left;
+  padding: 0.75rem 0.85rem;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e5e5e5;
+  white-space: nowrap;
+}
+
+.dc-tabla tbody td {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.dc-tabla tbody tr:hover {
+  background: #fafbfc;
+}
+
+.dc-tabla .dc-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dc-empty {
+  text-align: center;
+  color: #888;
+  padding: 2rem !important;
+  font-style: italic;
+}
+
+/* Badges de estado financiero */
+.dc-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dc-badge-ok      { background: #e6f6ec; color: #1f7a3a; }
+.dc-badge-info    { background: #e8f0fb; color: #1d4f91; }
+.dc-badge-warn    { background: #fff5d6; color: #8a6100; }
+.dc-badge-danger  { background: #fde2e2; color: #a11919; }
+.dc-badge-moroso  { background: #2b2b2b; color: #fff; }
+
+.dc-resumen {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+}

@@ -2,6 +2,41 @@
   text-align: center;
 }
 
+/* Navegación entre vistas */
+.app-nav {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-nav-btn {
+  padding: 0.55rem 1.1rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: #f5f7fa;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.app-nav-btn:hover {
+  background: #eef1f6;
+}
+
+.app-nav-btn.activo {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
