@@ -1,0 +1,255 @@
+.rc-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 0 1rem 3rem;
+  font-family: 'Segoe UI', sans-serif;
+  color: #1a1a1a;
+}
+
+.rc-container h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: #1a1a1a;
+}
+
+.rc-subtitulo {
+  color: #555;
+  margin-bottom: 1.8rem;
+  font-size: 0.97rem;
+}
+
+/* Toggle */
+.rc-toggle {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.rc-toggle-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #555;
+}
+
+.rc-toggle-btn:hover {
+  border-color: #0077cc;
+  color: #0077cc;
+}
+
+.rc-toggle-btn.activo {
+  background: #0077cc;
+  border-color: #0077cc;
+  color: #fff;
+}
+
+/* Form */
+.rc-form {
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 14px;
+  padding: 1.75rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.rc-seccion {
+  margin-bottom: 1.5rem;
+}
+
+.rc-seccion-titulo {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #0077cc;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e8f3fc;
+}
+
+.rc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.rc-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rc-campo-ancho {
+  grid-column: 1 / -1;
+}
+
+.rc-campo label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.rc-campo input {
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  background: #fafafa;
+  transition: border-color 0.2s, background 0.2s;
+  outline: none;
+}
+
+.rc-campo input:focus {
+  border-color: #0077cc;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0,119,204,0.1);
+}
+
+.rc-btn {
+  margin-top: 1.25rem;
+  width: 100%;
+  padding: 0.85rem;
+  background: #0077cc;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.rc-btn:hover:not(:disabled) {
+  background: #005fa3;
+}
+
+.rc-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.rc-btn:disabled {
+  background: #a0c4e8;
+  cursor: not-allowed;
+}
+
+.rc-mensaje {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.93rem;
+  font-weight: 500;
+}
+
+.rc-exito {
+  background: #eaf7ef;
+  color: #1a7a3f;
+  border: 1px solid #b6e5cc;
+}
+
+.rc-error {
+  background: #fef0f0;
+  color: #c0392b;
+  border: 1px solid #f5c0be;
+}
+
+@media (max-width: 540px) {
+  .rc-grid {
+    grid-template-columns: 1fr;
+  }
+  .rc-campo-ancho {
+    grid-column: 1;
+  }
+}
+
+/* Banner demo */
+.rc-banner-demo {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  color: #7a5f00;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 0.88rem;
+  margin-bottom: 1.2rem;
+}
+
+/* Lista demo */
+.rc-lista-demo {
+  margin-top: 2rem;
+}
+
+.rc-lista-demo h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.rc-item-demo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+}
+
+.rc-item-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.rc-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+}
+
+.rc-badge.empresa {
+  background: #e8f3fc;
+  color: #0077cc;
+}
+
+.rc-badge.persona {
+  background: #eaf7ef;
+  color: #1a7a3f;
+}
+
+.rc-item-rut {
+  font-size: 0.82rem;
+  color: #888;
+}
+
+.rc-item-extra {
+  font-size: 0.82rem;
+  color: #aaa;
+}
+
+.rc-btn-eliminar {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.rc-btn-eliminar:hover {
+  color: #c0392b;
+  background: #fef0f0;
+}
