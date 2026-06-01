@@ -1,16 +1,16 @@
 // src/pages/PedidosForm.js
 import { useState, useEffect } from 'react';
-import '../App.css';
+import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import '../App.css';
 
 export default function PedidosForm() {
-  const [productos, setProductos] = useState([]); // productos desde BD
+  const { cliente } = useAuth(); // obtener cliente logueado
+  const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [cantidades, setCantidades] = useState({});
   const [observaciones, setObservaciones] = useState('');
   const [mensaje, setMensaje] = useState('');
-  const [nombreEmpresa, setNombreEmpresa] = useState('');
-  const [correoEmpresa, setCorreoEmpresa] = useState('');
 
   const fechaPedido = new Date().toLocaleDateString('es-ES', {
     year: 'numeric',
@@ -18,14 +18,14 @@ export default function PedidosForm() {
     day: 'numeric'
   });
 
-  // Cargar productos al montar
+  // Cargar productos
   useEffect(() => {
     const cargarProductos = async () => {
       setCargando(true);
       const { data, error } = await supabase
         .from('productos')
         .select('id, nombre, precio_unitario')
-        .order('nombre'); // o por id
+        .order('nombre');
 
       if (error) {
         console.error(error);
@@ -33,7 +33,6 @@ export default function PedidosForm() {
         setProductos([]);
       } else {
         setProductos(data || []);
-        // Inicializar cantidades en 0 para cada producto
         const initialCantidades = {};
         (data || []).forEach(prod => {
           initialCantidades[prod.id] = 0;
@@ -75,18 +74,9 @@ export default function PedidosForm() {
   }, 0);
 
   const handleEnviarPedido = async () => {
-    // Validaciones
-    if (!nombreEmpresa.trim()) {
-      setMensaje('Por favor ingresa el nombre de la empresa.');
-      return;
-    }
-    if (!correoEmpresa.trim()) {
-      setMensaje('Por favor ingresa el correo de la empresa.');
-      return;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correoEmpresa.trim())) {
-      setMensaje('Ingresa un correo electrónico válido.');
+    // Validar que haya cliente logueado
+    if (!cliente) {
+      setMensaje('Debes iniciar sesión para hacer un pedido.');
       return;
     }
 
@@ -96,12 +86,13 @@ export default function PedidosForm() {
       return;
     }
 
+    // Datos del pedido (ahora con cliente_id)
     const pedidoData = {
       fecha: new Date().toISOString(),
-      nombre_empresa: nombreEmpresa.trim(),
-      correo_empresa: correoEmpresa.trim(),
+      cliente_id: cliente.id,
       observaciones: observaciones.trim() || null,
-      total: totalGeneral
+      total: totalGeneral,
+      estado: 'pendiente'   // por defecto
     };
 
     try {
@@ -111,7 +102,7 @@ export default function PedidosForm() {
         .insert([pedidoData])
         .select();
 
-      if (errorPedido) throw new Error(`Error en pedidos: ${errorPedido.message} (${errorPedido.code})`);
+      if (errorPedido) throw new Error(`Error en pedidos: ${errorPedido.message}`);
 
       const pedidoId = pedidoInsert[0].id;
 
@@ -129,17 +120,15 @@ export default function PedidosForm() {
         .from('detalle_pedido')
         .insert(detalles);
 
-      if (errorDetalles) throw new Error(`Error en detalles: ${errorDetalles.message} (${errorDetalles.code})`);
+      if (errorDetalles) throw new Error(`Error en detalles: ${errorDetalles.message}`);
 
       setMensaje(`✅ Pedido #${pedidoId} guardado correctamente. Total: $${totalGeneral.toLocaleString()}`);
-      
-      // Opcional: limpiar formulario
-      // setNombreEmpresa('');
-      // setCorreoEmpresa('');
-      // setObservaciones('');
-      // const resetCantidades = {};
-      // productos.forEach(prod => { resetCantidades[prod.id] = 0; });
-      // setCantidades(resetCantidades);
+
+      // Limpiar cantidades y observaciones
+      const resetCantidades = {};
+      productos.forEach(prod => { resetCantidades[prod.id] = 0; });
+      setCantidades(resetCantidades);
+      setObservaciones('');
     } catch (error) {
       console.error(error);
       setMensaje(`❌ Error: ${error.message}`);
@@ -157,40 +146,14 @@ export default function PedidosForm() {
   return (
     <div className="form-container">
       <h1>🐟 Formulario De Pedidos 🐟</h1>
-      <p>Ingresa las cantidades deseadas en la columna "Cantidad". El precio se calcula automáticamente.</p>
+      <p>Ingresa las cantidades deseadas. El pedido se asociará automáticamente a tu cuenta.</p>
 
-      <div className="datos-empresa" style={{ marginBottom: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-        <div className="form-group" style={{ flex: '1 1 200px' }}>
-          <label htmlFor="nombreEmpresa">Nombre Empresa *</label>
-          <input
-            type="text"
-            id="nombreEmpresa"
-            value={nombreEmpresa}
-            onChange={(e) => setNombreEmpresa(e.target.value)}
-            placeholder="Ej: Pesquera del Sur"
-          />
-        </div>
-        <div className="form-group" style={{ flex: '1 1 200px' }}>
-          <label htmlFor="correoEmpresa">Correo empresa *</label>
-          <input
-            type="email"
-            id="correoEmpresa"
-            value={correoEmpresa}
-            onChange={(e) => setCorreoEmpresa(e.target.value)}
-            placeholder="ventas@pesquera.cl"
-          />
-        </div>
-        <div className="form-group" style={{ flex: '1 1 200px' }}>
-          <label htmlFor="fechaPedido">Fecha del pedido</label>
-          <input
-            type="text"
-            id="fechaPedido"
-            value={fechaPedido}
-            readOnly
-            disabled
-            style={{ backgroundColor: '#f0f0f0', cursor: 'not-allowed' }}
-          />
-        </div>
+      {/* Datos del cliente (solo informativo) */}
+      <div className="datos-cliente" style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f0f9ff', borderRadius: '12px' }}>
+        <p><strong>Cliente:</strong> {cliente?.nombre} {cliente?.apellido}</p>
+        <p><strong>RUT:</strong> {cliente?.rut}</p>
+        <p><strong>Correo:</strong> {cliente?.correo}</p>
+        <p><strong>Fecha del pedido:</strong> {fechaPedido}</p>
       </div>
 
       <div className="tabla-pedido">

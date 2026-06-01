@@ -1,0 +1,54 @@
+/* Asegurar que el contenedor del dashboard tenga ancho limitado */
+.dc-container {
+  max-width: 1200px;
+  margin: 0 auto;        /* centrar */
+  width: 100%;
+  padding: 0 1rem;       /* opcional: separación en móviles */
+}
+
+/* Para que los controles no se estiren innecesariamente */
+.dc-controles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;   /* cambia de 'stretch' a 'center' */
+  margin-bottom: 1.25rem;
+}
+
+/* El input de búsqueda puede crecer pero con un límite */
+.dc-input {
+  flex: 1 1 280px;       /* puede crecer hasta cierto punto */
+  min-width: 180px;
+  max-width: 400px;      /* no se estira más de 400px */
+  padding: 0.65rem 0.85rem;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  /* resto igual */
+}
+
+/* El botón recargar NO debe crecer */
+.dc-btn-recargar {
+  flex: 0 0 auto;        /* mantiene su tamaño natural */
+  padding: 0.65rem 1.25rem;
+  white-space: nowrap;   /* evita que el texto se rompa */
+}
+
+/* Opcional: si la tabla se sale en pantallas pequeñas, el wrap ya lo maneja */
+.dc-tabla-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+}
+
+.dc-btn-icon {
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: opacity 0.2s;
+}
+
+.dc-btn-icon:hover {
+  opacity: 0.8;
+}
