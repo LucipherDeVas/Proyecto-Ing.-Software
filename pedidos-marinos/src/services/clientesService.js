@@ -82,3 +82,24 @@ export async function validarClienteDuplicado({ rut, correo }) {
 
   return { duplicado: false, campo: null, mensaje: '' };
 }
+
+// =====================================================
+// ✅ NUEVA FUNCIÓN: Actualizar cualquier campo de un cliente
+// =====================================================
+/**
+ * Actualiza uno o más campos de un cliente existente.
+ * @param {number|string} id - ID del cliente
+ * @param {object} datosActualizados - Objeto con los campos a modificar (ej: { limite_deuda: 150000 })
+ * @returns {Promise<object>} El cliente actualizado
+ */
+export async function actualizarCliente(id, datosActualizados) {
+  const { data, error } = await supabase
+    .from('clientes')
+    .update(datosActualizados)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw new Error(`Error actualizando cliente: ${error.message}`);
+  return data;
+}
