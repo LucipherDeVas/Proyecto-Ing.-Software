@@ -1,3 +1,5 @@
+**no se por que, pero me aparece la carpeta de la version 1 del programa en mi rama xd. Esa carpeta no la usé para hacer el resto, así que si pueden obviarla sería god xd**
+
 # Vista de Reportes — Pedidos Marinos
 
 Módulo autónomo de React que muestra el **histórico de pedidos** con filtros interactivos. Funciona completamente en memoria (modo demo) y está preparado para conectarse a Supabase cuando se tenga acceso a la base de datos (actualmente no tengo acceso a la base, así que no me puedo conectar xdxd).
