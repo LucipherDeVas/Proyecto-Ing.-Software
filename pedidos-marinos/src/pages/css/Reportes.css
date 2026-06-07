@@ -1,0 +1,185 @@
+/* src/pages/css/Reportes.css */
+
+/* ── Contenedor ──────────────────────────────────────────── */
+.rp-container {
+  /* hereda .rc-container */
+}
+
+/* ── Tarjetas de métricas ────────────────────────────────── */
+.rp-metricas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+}
+
+.rp-metrica {
+  flex: 1 1 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 1rem 0.75rem 0.9rem;
+  background: #f7f9fc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  transition: box-shadow 0.18s;
+}
+.rp-metrica:hover {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
+.rp-num {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #1a202c;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.rp-lbl {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #718096;
+  font-weight: 600;
+}
+
+/* variantes de color */
+.rp-m-monto                { background: #ebf8ff; border-color: #bee3f8; }
+.rp-m-monto  .rp-num       { color: #2b6cb0; }
+.rp-m-ok                   { background: #f0fff4; border-color: #c6f6d5; }
+.rp-m-ok     .rp-num       { color: #276749; }
+.rp-m-warn                 { background: #fffbeb; border-color: #fde68a; }
+.rp-m-warn   .rp-num       { color: #92400e; }
+.rp-m-danger               { background: #fff5f5; border-color: #fed7d7; }
+.rp-m-danger .rp-num       { color: #c53030; }
+
+/* ── Filtros ─────────────────────────────────────────────── */
+.rp-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.7rem;
+  margin-bottom: 1.25rem;
+}
+
+.rp-fg {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.rp-flabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #718096;
+  font-weight: 700;
+}
+
+.rp-fg-acciones {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-left: auto;
+}
+
+.rp-btn-limpiar {
+  background: #fff !important;
+  color: #e53e3e !important;
+  border: 1px solid #fc8181 !important;
+}
+.rp-btn-limpiar:hover:not(:disabled) {
+  background: #fff5f5 !important;
+  box-shadow: none !important;
+}
+
+/* ── Tabla específica ────────────────────────────────────── */
+.rp-tabla .rp-id-col     { color: #a0aec0; font-size: 0.82rem; }
+.rp-tabla .rp-fecha-col  { white-space: nowrap; }
+.rp-tabla .rp-hora-col   { color: #718096; font-size: 0.84rem; white-space: nowrap; }
+.rp-tabla .rp-cliente-col{ font-weight: 600; }
+.rp-tabla .rp-rut-col    { font-size: 0.82rem; color: #718096; white-space: nowrap; }
+.rp-tabla .rp-total-col  { font-weight: 700; color: #2b6cb0; }
+
+/* franja lateral por estado */
+.rp-fila-entregado td:first-child { border-left: 3px solid #68d391; }
+.rp-fila-pendiente td:first-child { border-left: 3px solid #f6e05e; }
+.rp-fila-cancelado                { opacity: 0.72; }
+.rp-fila-cancelado td:first-child { border-left: 3px solid #fc8181; }
+
+/* ── Badges de estado ────────────────────────────────────── */
+.rp-badge {
+  display: inline-block;
+  padding: 0.2em 0.65em;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.rp-badge-pendiente { background: #fefcbf; color: #744210; border: 1px solid #f6e05e; }
+.rp-badge-entregado { background: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+.rp-badge-cancelado { background: #fed7d7; color: #742a2a; border: 1px solid #fc8181; }
+
+/* ── Observaciones expandibles ───────────────────────────── */
+.rp-obs-col { min-width: 85px; }
+
+.rp-obs-btn {
+  background: none;
+  border: 1px solid #cbd5e0;
+  border-radius: 5px;
+  padding: 0.18em 0.6em;
+  font-size: 0.75rem;
+  color: #4a5568;
+  cursor: pointer;
+  transition: background 0.14s;
+  white-space: nowrap;
+}
+.rp-obs-btn:hover {
+  background: #edf2f7;
+  border-color: #a0aec0;
+}
+
+.rp-obs-texto {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #4a5568;
+  background: #f7fafc;
+  border-left: 3px solid #63b3ed;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0 4px 4px 0;
+  max-width: 200px;
+  line-height: 1.45;
+}
+
+.rp-obs-vacia { color: #cbd5e0; }
+
+/* ── Spinner de carga ────────────────────────────────────── */
+.dc-empty {
+  /* ya definido en App.css; aquí solo el spinner */
+}
+.rp-spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #e2e8f0;
+  border-top-color: #4299e1;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.4rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .rp-metricas    { gap: 0.5rem; }
+  .rp-metrica     { flex: 1 1 calc(50% - 0.5rem); padding: 0.8rem 0.5rem; }
+  .rp-m-monto     { flex: 1 1 100%; }
+  .rp-filtros     { flex-direction: column; }
+  .rp-fg-acciones { margin-left: 0; }
+  .dc-tabla       { font-size: 0.8rem; }
+}
