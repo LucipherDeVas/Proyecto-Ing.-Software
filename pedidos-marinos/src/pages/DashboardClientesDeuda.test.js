@@ -10,7 +10,7 @@ jest.mock('../services/clientesService', () => ({
   listarClientes: jest.fn(),
 }));
 // eslint-disable-next-line import/first
-import { listarClientes } from '../../../src/services/clientesService';
+import { listarClientes } from '../services/clientesService';
 
 // ============================================================
 // 1. Helpers de cálculo
