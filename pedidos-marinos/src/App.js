@@ -8,6 +8,7 @@ import Inicio from './pages/inicio';
 // import RegistroCliente from './pages/RegistroCliente'; // ya no se usa aquí
 import ListaClientes from './pages/ListaClientes'; // nuevo componente
 import DashboardClientesDeuda from './pages/DashboardClientesDeuda';
+import ReporteContable from './pages/ReporteContable';
 import Login from './pages/login';
 import Register from './pages/RegistroCliente'; // para el registro autónomo
 import './App.css';
@@ -61,6 +62,7 @@ function AppContent() {
           <Link to="/pedidos">Pedidos</Link>
           <Link to="/productos">Productos</Link>
           <Link to="/clientes">Clientes</Link>
+          <Link to="/reportes">Reportes</Link>
         </div>
         <div>
           <button onClick={signOut} style={{ background: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px' }}>
@@ -74,6 +76,7 @@ function AppContent() {
         <Route path="/pedidos" element={<PedidosForm />} />
         <Route path="/productos" element={<ProductosForm />} />
         <Route path="/clientes" element={<ClientesSection />} />
+        <Route path="/reportes" element={<ReporteContable />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
