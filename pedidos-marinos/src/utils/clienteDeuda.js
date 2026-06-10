@@ -34,7 +34,9 @@ export function porcentajeUsado(cliente) {
 }
 
 export function nombreCliente(c) {
-  if (c.tipo === 'empresa') return c.razon_social || '—';
+  if (c.tipo === 'empresa') {
+    return c.razon_social || [c.nombre, c.apellido].filter(Boolean).join(' ') || '—';
+  }
   return [c.nombre, c.apellido].filter(Boolean).join(' ') || '—';
 }
 
