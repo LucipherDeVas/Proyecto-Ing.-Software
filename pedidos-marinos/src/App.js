@@ -1,33 +1,31 @@
 // src/App.js
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom'; // ← corregido
 import { useState } from 'react';
 import { useAuth, AuthProvider } from './context/AuthContext';
 import PedidosForm from './pages/pedidosForm';
 import ProductosForm from './pages/productosForm';
 import Inicio from './pages/inicio';
-import RegistroCliente from './pages/RegistroCliente';
+// import RegistroCliente from './pages/RegistroCliente'; // ya no se usa aquí
+import ListaClientes from './pages/ListaClientes'; // nuevo componente
 import DashboardClientesDeuda from './pages/DashboardClientesDeuda';
 import Login from './pages/login';
-import Register from './pages/RegistroCliente'; // si usas el mismo componente para registro
+import Register from './pages/RegistroCliente'; // para el registro autónomo
 import './App.css';
-
-
-
 
 // Componente interno para la sección de clientes (con toggle)
 function ClientesSection() {
-  const [vista, setVista] = useState('registro');
+  const [vista, setVista] = useState('lista'); // cambiar valor inicial a 'lista'
   return (
     <>
       <nav className="app-nav">
-        <button className={`app-nav-btn ${vista === 'registro' ? 'activo' : ''}`} onClick={() => setVista('registro')}>
-          Registro de clientes
+        <button className={`app-nav-btn ${vista === 'lista' ? 'activo' : ''}`} onClick={() => setVista('lista')}>
+          Lista de clientes
         </button>
         <button className={`app-nav-btn ${vista === 'dashboard' ? 'activo' : ''}`} onClick={() => setVista('dashboard')}>
           Dashboard de deuda
         </button>
       </nav>
-      {vista === 'registro' && <RegistroCliente />}
+      {vista === 'lista' && <ListaClientes />}
       {vista === 'dashboard' && <DashboardClientesDeuda />}
     </>
   );
@@ -35,14 +33,12 @@ function ClientesSection() {
 
 // Componente principal que decide qué mostrar según autenticación
 function AppContent() {
-  const { session, cliente, signOut, cargando } = useAuth(); // ← incluye cargando
+  const { session, cliente, signOut, cargando } = useAuth();
 
-  // Mientras se carga la sesión o el cliente, muestra un mensaje
   if (cargando) {
     return <div className="form-container">Cargando sesión...</div>;
   }
 
-  // Si no hay sesión, mostrar solo login/registro
   if (!session) {
     return (
       <Routes>
@@ -53,7 +49,6 @@ function AppContent() {
     );
   }
 
-  // Ahora session existe y cargando es false, cliente puede ser null si no existe en BD
   const nombreMostrar = cliente
     ? `${cliente.nombre} ${cliente.apellido}`
     : session.user.email;

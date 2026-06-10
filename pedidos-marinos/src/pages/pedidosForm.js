@@ -1,13 +1,21 @@
 // src/pages/PedidosForm.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { crearPedidoConValidacion } from '../services/pedidosService';
+import {
+  calcularEstado,
+  estaClienteBloqueado,
+  evaluarPedido,
+} from '../utils/clienteDeuda';
 import '../App.css';
 
 export default function PedidosForm() {
-  const { cliente } = useAuth(); // obtener cliente logueado
+  const { cliente } = useAuth();
+  const [clienteActualizado, setClienteActualizado] = useState(cliente);
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [enviando, setEnviando] = useState(false);
   const [cantidades, setCantidades] = useState({});
   const [observaciones, setObservaciones] = useState('');
   const [mensaje, setMensaje] = useState('');
@@ -15,10 +23,31 @@ export default function PedidosForm() {
   const fechaPedido = new Date().toLocaleDateString('es-ES', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   });
 
-  // Cargar productos
+  useEffect(() => {
+    setClienteActualizado(cliente);
+  }, [cliente]);
+
+  useEffect(() => {
+    if (!cliente?.id) return;
+
+    const recargarCliente = async () => {
+      const { data, error } = await supabase
+        .from('clientes')
+        .select('*')
+        .eq('id', cliente.id)
+        .maybeSingle();
+
+      if (!error && data) {
+        setClienteActualizado(data);
+      }
+    };
+
+    recargarCliente();
+  }, [cliente?.id]);
+
   useEffect(() => {
     const cargarProductos = async () => {
       setCargando(true);
@@ -34,7 +63,7 @@ export default function PedidosForm() {
       } else {
         setProductos(data || []);
         const initialCantidades = {};
-        (data || []).forEach(prod => {
+        (data || []).forEach((prod) => {
           initialCantidades[prod.id] = 0;
         });
         setCantidades(initialCantidades);
@@ -73,65 +102,78 @@ export default function PedidosForm() {
     return total + calcularSubtotal(producto);
   }, 0);
 
-  const handleEnviarPedido = async () => {
-    // Validar que haya cliente logueado
-    if (!cliente) {
+  const clienteBloqueado = useMemo(
+    () => estaClienteBloqueado(clienteActualizado),
+    [clienteActualizado]
+  );
+
+  const evaluacionPedido = useMemo(() => {
+    if (!clienteActualizado || totalGeneral <= 0) return null;
+    return evaluarPedido(clienteActualizado, totalGeneral);
+  }, [clienteActualizado, totalGeneral]);
+
+  const botonDeshabilitado =
+    enviando ||
+    !clienteActualizado ||
+    clienteBloqueado ||
+    totalGeneral <= 0 ||
+    (evaluacionPedido && !evaluacionPedido.aceptado);
+
+  const handleAceptarPedido = async () => {
+    if (!clienteActualizado) {
       setMensaje('Debes iniciar sesión para hacer un pedido.');
       return;
     }
 
-    const productosPedidos = productos.filter(prod => (cantidades[prod.id] || 0) > 0);
+    if (clienteBloqueado) {
+      setMensaje('❌ No puedes aceptar pedidos: tu cuenta está bloqueada.');
+      return;
+    }
+
+    const productosPedidos = productos.filter((prod) => (cantidades[prod.id] || 0) > 0);
     if (productosPedidos.length === 0) {
       setMensaje('No has ingresado ninguna cantidad. Agrega al menos un producto.');
       return;
     }
 
-    // Datos del pedido (ahora con cliente_id)
-    const pedidoData = {
-      fecha: new Date().toISOString(),
-      cliente_id: cliente.id,
-      observaciones: observaciones.trim() || null,
-      total: totalGeneral,
-      estado: 'pendiente'   // por defecto
-    };
+    setEnviando(true);
+    setMensaje('');
 
     try {
-      // 1. Insertar pedido
-      const { data: pedidoInsert, error: errorPedido } = await supabase
-        .from('pedidos')
-        .insert([pedidoData])
-        .select();
+      const resultado = await crearPedidoConValidacion({
+        clienteId: clienteActualizado.id,
+        productosPedidos,
+        cantidades,
+        calcularSubtotal,
+        observaciones,
+        total: totalGeneral,
+      });
 
-      if (errorPedido) throw new Error(`Error en pedidos: ${errorPedido.message}`);
+      if (resultado.procesado) {
+        setMensaje(
+          `✅ Pedido #${resultado.pedido.id} aceptado. Total: $${totalGeneral.toLocaleString()}`
+        );
+        setClienteActualizado((prev) => ({
+          ...prev,
+          deuda_actual: resultado.deudaActualizada,
+        }));
 
-      const pedidoId = pedidoInsert[0].id;
-
-      // 2. Preparar detalles
-      const detalles = productosPedidos.map(prod => ({
-        pedido_id: pedidoId,
-        producto: prod.nombre,
-        cantidad: cantidades[prod.id],
-        precio_unitario: prod.precio_unitario,
-        subtotal: calcularSubtotal(prod)
-      }));
-
-      // 3. Insertar detalles
-      const { error: errorDetalles } = await supabase
-        .from('detalle_pedido')
-        .insert(detalles);
-
-      if (errorDetalles) throw new Error(`Error en detalles: ${errorDetalles.message}`);
-
-      setMensaje(`✅ Pedido #${pedidoId} guardado correctamente. Total: $${totalGeneral.toLocaleString()}`);
-
-      // Limpiar cantidades y observaciones
-      const resetCantidades = {};
-      productos.forEach(prod => { resetCantidades[prod.id] = 0; });
-      setCantidades(resetCantidades);
-      setObservaciones('');
+        const resetCantidades = {};
+        productos.forEach((prod) => {
+          resetCantidades[prod.id] = 0;
+        });
+        setCantidades(resetCantidades);
+        setObservaciones('');
+      } else {
+        setMensaje(
+          `❌ Pedido #${resultado.pedido.id} rechazado: ${resultado.evaluacion.motivo}`
+        );
+      }
     } catch (error) {
       console.error(error);
       setMensaje(`❌ Error: ${error.message}`);
+    } finally {
+      setEnviando(false);
     }
   };
 
@@ -140,21 +182,60 @@ export default function PedidosForm() {
   }
 
   if (productos.length === 0 && !cargando) {
-    return <div className="form-container">No hay productos disponibles. Por favor, agrega productos desde el panel de administración.</div>;
+    return (
+      <div className="form-container">
+        No hay productos disponibles. Por favor, agrega productos desde el panel de administración.
+      </div>
+    );
   }
+
+  const estadoFinanciero = clienteActualizado ? calcularEstado(clienteActualizado) : null;
 
   return (
     <div className="form-container">
       <h1>🐟 Formulario De Pedidos 🐟</h1>
       <p>Ingresa las cantidades deseadas. El pedido se asociará automáticamente a tu cuenta.</p>
 
-      {/* Datos del cliente (solo informativo) */}
-      <div className="datos-cliente" style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f0f9ff', borderRadius: '12px' }}>
-        <p><strong>Cliente:</strong> {cliente?.nombre} {cliente?.apellido}</p>
-        <p><strong>RUT:</strong> {cliente?.rut}</p>
-        <p><strong>Correo:</strong> {cliente?.correo}</p>
-        <p><strong>Fecha del pedido:</strong> {fechaPedido}</p>
+      <div
+        className="datos-cliente"
+        style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f0f9ff', borderRadius: '12px' }}
+      >
+        <p>
+          <strong>Cliente:</strong> {clienteActualizado?.nombre} {clienteActualizado?.apellido}
+        </p>
+        <p>
+          <strong>RUT:</strong> {clienteActualizado?.rut}
+        </p>
+        <p>
+          <strong>Correo:</strong> {clienteActualizado?.correo}
+        </p>
+        <p>
+          <strong>Deuda actual:</strong> ${Number(clienteActualizado?.deuda_actual ?? 0).toLocaleString()}
+        </p>
+        <p>
+          <strong>Límite de deuda:</strong> ${Number(clienteActualizado?.limite_deuda ?? 0).toLocaleString()}
+        </p>
+        {estadoFinanciero && (
+          <p>
+            <strong>Estado financiero:</strong> {estadoFinanciero}
+          </p>
+        )}
+        <p>
+          <strong>Fecha del pedido:</strong> {fechaPedido}
+        </p>
       </div>
+
+      {clienteBloqueado && (
+        <div className="mensaje" style={{ background: '#fee2e2', color: '#991b1b', marginBottom: '1rem' }}>
+          Tu cuenta está bloqueada. No puedes aceptar pedidos en este momento.
+        </div>
+      )}
+
+      {!clienteBloqueado && evaluacionPedido && !evaluacionPedido.aceptado && totalGeneral > 0 && (
+        <div className="mensaje" style={{ background: '#fef3c7', color: '#92400e', marginBottom: '1rem' }}>
+          {evaluacionPedido.motivo}
+        </div>
+      )}
 
       <div className="tabla-pedido">
         <table>
@@ -166,7 +247,7 @@ export default function PedidosForm() {
             </tr>
           </thead>
           <tbody>
-            {productos.map(producto => (
+            {productos.map((producto) => (
               <tr key={producto.id}>
                 <td>{producto.nombre}</td>
                 <td>
@@ -178,16 +259,18 @@ export default function PedidosForm() {
                     className="cantidad-input"
                   />
                 </td>
-                <td className="precio-columna">
-                  ${calcularSubtotal(producto).toLocaleString()}
-                </td>
+                <td className="precio-columna">${calcularSubtotal(producto).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan="2" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total general:</td>
-              <td style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>${totalGeneral.toLocaleString()}</td>
+              <td colSpan="2" style={{ textAlign: 'right', fontWeight: 'bold' }}>
+                Total general:
+              </td>
+              <td style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                ${totalGeneral.toLocaleString()}
+              </td>
             </tr>
           </tfoot>
         </table>
@@ -204,7 +287,16 @@ export default function PedidosForm() {
         />
       </div>
 
-      <button onClick={handleEnviarPedido} className="submit-btn">Enviar pedido</button>
+      {!clienteBloqueado && (
+        <button
+          onClick={handleAceptarPedido}
+          className="submit-btn"
+          disabled={botonDeshabilitado}
+        >
+          {enviando ? 'Procesando...' : 'Aceptar pedido'}
+        </button>
+      )}
+
       {mensaje && <div className="mensaje">{mensaje}</div>}
     </div>
   );

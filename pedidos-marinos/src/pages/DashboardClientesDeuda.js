@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { listarClientes } from '../services/clientesService';
+import { calcularEstado, porcentajeUsado, nombreCliente } from '../utils/clienteDeuda';
 import './css/DashboardClientesDeuda.css';
+
+export { calcularEstado, porcentajeUsado, nombreCliente };
 
 const ESTADOS = [
   'Sin deuda',
@@ -22,46 +25,6 @@ const formatoFecha = (valor) => {
   if (Number.isNaN(d.getTime())) return valor;
   return d.toLocaleDateString('es-CL');
 };
-
-/**
- * Calcula el estado financiero de un cliente según las reglas de negocio.
- * Prioridad: Moroso > Límite superado > Cercano al límite > Con deuda > Sin deuda.
- */
-export function calcularEstado(cliente) {
-  const deuda = Number(cliente.deuda_actual ?? 0);
-  const limite = Number(cliente.limite_deuda ?? 0);
-
-  if (deuda <= 0) return 'Sin deuda';
-
-  // Moroso: fecha actual > fecha_vencimiento_deuda y deuda > 0
-  if (cliente.fecha_vencimiento_deuda) {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    const venc = new Date(cliente.fecha_vencimiento_deuda);
-    venc.setHours(0, 0, 0, 0);
-    if (venc.getTime() < hoy.getTime()) return 'Moroso';
-  }
-
-  if (limite > 0 && deuda >= limite) return 'Límite superado';
-
-  if (limite > 0 && deuda / limite >= 0.8 && deuda < limite) {
-    return 'Cercano al límite';
-  }
-
-  return 'Con deuda';
-}
-
-export function porcentajeUsado(cliente) {
-  const deuda = Number(cliente.deuda_actual ?? 0);
-  const limite = Number(cliente.limite_deuda ?? 0);
-  if (limite <= 0) return null; // evitar división por cero
-  return (deuda / limite) * 100;
-}
-
-export function nombreCliente(c) {
-  if (c.tipo === 'empresa') return c.razon_social || '—';
-  return [c.nombre, c.apellido].filter(Boolean).join(' ') || '—';
-}
 
 function badgeClass(estado) {
   switch (estado) {
