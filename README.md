@@ -79,17 +79,17 @@ npm install
 
 ## Configuración de Supabase
 
-Crea `pedidos-marinos/.env` con la URL y la clave pública del proyecto:
+Se debe crear `pedidos-marinos/.env` con la URL y la clave pública del proyecto:
 
 ```env
 REACT_APP_SUPABASE_URL=https://TU-PROYECTO.supabase.co
 REACT_APP_SUPABASE_PUBLISHABLE_KEY=TU_CLAVE_PUBLICA
 ```
 
-No uses la clave `service_role` en el frontend y no subas el archivo `.env` a
-GitHub.
+La clave `service_role` no debe utilizarse en el frontend y el archivo `.env`
+no debe subirse a GitHub.
 
-En Supabase, abrir **SQL Editor** y ejecutar estos archivos en orden:
+En Supabase, se debe abrir **SQL Editor** y ejecutar estos archivos en orden:
 
 1. `001_esquema_base.sql`
 2. `002_funciones_y_triggers.sql`
