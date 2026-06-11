@@ -56,16 +56,19 @@ function AppContent() {
 
   return (
     <>
-      <nav style={{ display: 'flex', gap: '1rem', padding: '1rem', background: '#f0f0f0', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <Link to="/">Inicio</Link>
-          <Link to="/pedidos">Pedidos</Link>
-          <Link to="/productos">Productos</Link>
-          <Link to="/clientes">Clientes</Link>
-          <Link to="/reportes">Reportes</Link>
+      {/* Nav superior — restyling visual al sistema "Floema" (clases en App.css).
+          Rutas, handlers y textos SIN CAMBIOS; solo se reemplazan los
+          estilos inline por classNames de presentación. */}
+      <nav className="topnav">
+        <div className="topnav-group">
+          <Link className="topnav-link" to="/">Inicio</Link>
+          <Link className="topnav-link" to="/pedidos">Pedidos</Link>
+          <Link className="topnav-link" to="/productos">Productos</Link>
+          <Link className="topnav-link" to="/clientes">Clientes</Link>
+          <Link className="topnav-link" to="/reportes">Reportes</Link>
         </div>
         <div>
-          <button onClick={signOut} style={{ background: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', padding: '5px 10px' }}>
+          <button onClick={signOut} className="topnav-logout">
             Cerrar sesión {nombreMostrar}
           </button>
         </div>

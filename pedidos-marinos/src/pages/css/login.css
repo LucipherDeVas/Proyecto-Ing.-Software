@@ -1,82 +1,97 @@
+/* Login — restyling al sistema "Floema" (guia_web/).
+   Clases y estructura sin cambios; solo variables visuales. */
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 80vh;
-  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  background: var(--color-bg);          /* antes degradado marino */
   padding: 20px;
 }
 
 .login-card {
-  background: white;
-  border-radius: 30px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);           /* 30px */
   padding: 2rem;
-  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   width: 100%;
   max-width: 400px;
 }
 
 .login-card h1 {
   text-align: center;
-  color: #0c4a6e;
+  color: var(--color-fg);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-heading);
   margin-bottom: 0.5rem;
 }
 
 .login-card p {
   text-align: center;
-  color: #555;
+  color: var(--color-fg-70);
   margin-bottom: 2rem;
 }
 
+/* Botón primario — sólido oscuro pill */
 .login-btn {
-  background: linear-gradient(135deg, #0284c7, #0ea5e9);
-  color: white;
-  border: none;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border: 1px solid var(--color-fg);
   padding: 12px;
   font-size: 1rem;
-  font-weight: bold;
-  border-radius: 40px;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
+  border-radius: var(--r-pill);
   width: 100%;
   cursor: pointer;
-  transition: 0.2s;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              transform var(--transition-fast);
   margin-top: 1rem;
 }
 
 .login-btn:hover {
-  background: linear-gradient(135deg, #0369a1, #0284c7);
-  transform: scale(1.02);
+  background: transparent;
+  color: var(--color-fg);
+  transform: translateY(-1px);
 }
 
 .mensaje-login {
   margin-top: 1rem;
   padding: 10px;
-  border-radius: 15px;
+  border-radius: var(--r-sm);
   text-align: center;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
+/* Estados: mapeados a la paleta del sistema */
 .mensaje-login.exito {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-green);
+  color: var(--color-teal);
 }
 
 .mensaje-login.error {
-  background: #fee2e2;
-  color: #991b1b;
+  background: #F6D7CD;                   /* tinte suave del naranja del sistema */
+  color: #8A2E16;
 }
 
 .registro-link {
   margin-top: 1.5rem;
   text-align: center;
   font-size: 0.9rem;
+  color: var(--color-fg-70);
 }
 
 .registro-link a {
-  color: #0ea5e9;
-  text-decoration: none;
-  font-weight: 600;
+  color: var(--color-fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: var(--fw-medium);
 }
 
 .registro-link a:hover {
-  text-decoration: underline;
+  color: var(--color-fg-70);
 }

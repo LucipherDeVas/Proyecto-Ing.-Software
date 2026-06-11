@@ -1,62 +1,70 @@
+/* Registro de cliente — restyling al sistema "Floema" (guia_web/).
+   Selectores intactos; solo se actualizan los estilos visuales. */
+
 .rc-container {
   max-width: 700px;
   margin: 2rem auto;
   padding: 0 1rem 3rem;
-  font-family: 'Segoe UI', sans-serif;
-  color: #1a1a1a;
+  font-family: var(--font-family);
+  color: var(--color-fg);
 }
 
 .rc-container h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-heading);
   margin-bottom: 0.3rem;
-  color: #1a1a1a;
+  color: var(--color-fg);
 }
 
 .rc-subtitulo {
-  color: #555;
+  color: var(--color-fg-70);
   margin-bottom: 1.8rem;
   font-size: 0.97rem;
 }
 
-/* Toggle */
+/* Toggle Empresa / Persona → pill buttons */
 .rc-toggle {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--sp-sm);
   margin-bottom: 2rem;
 }
 
 .rc-toggle-btn {
   flex: 1;
   padding: 0.75rem;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-sm);
+  background: var(--color-surface);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--fw-regular);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
   cursor: pointer;
-  transition: all 0.2s;
-  color: #555;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              border-color var(--transition-base);
+  color: var(--color-fg-70);
 }
 
 .rc-toggle-btn:hover {
-  border-color: #0077cc;
-  color: #0077cc;
+  border-color: var(--color-fg);
+  color: var(--color-fg);
 }
 
 .rc-toggle-btn.activo {
-  background: #0077cc;
-  border-color: #0077cc;
-  color: #fff;
+  background: var(--color-fg);
+  border-color: var(--color-fg);
+  color: var(--color-bg);
 }
 
-/* Form */
+/* Form — card sobre superficie */
 .rc-form {
-  background: #fff;
-  border: 1px solid #e4e4e4;
-  border-radius: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
   padding: 1.75rem;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-soft);
 }
 
 .rc-seccion {
@@ -64,14 +72,14 @@
 }
 
 .rc-seccion-titulo {
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #0077cc;
+  letter-spacing: var(--ls-upper);
+  color: var(--color-fg-70);
   margin-bottom: 1rem;
   padding-bottom: 0.4rem;
-  border-bottom: 2px solid #e8f3fc;
+  border-bottom: 1px solid var(--color-fg-10);
 }
 
 .rc-grid {
@@ -92,43 +100,50 @@
 
 .rc-campo label {
   font-size: 0.85rem;
-  font-weight: 600;
-  color: #333;
+  font-weight: var(--fw-medium);
+  color: var(--color-fg);
 }
 
 .rc-campo input {
   padding: 0.6rem 0.85rem;
-  border: 1.5px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-xs);
   font-size: 0.95rem;
-  color: #1a1a1a;
-  background: #fafafa;
-  transition: border-color 0.2s, background 0.2s;
+  color: var(--color-fg);
+  background: var(--color-white);
+  transition: border-color var(--transition-base),
+              box-shadow var(--transition-base);
   outline: none;
 }
 
 .rc-campo input:focus {
-  border-color: #0077cc;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(0,119,204,0.1);
+  border-color: var(--color-fg);
+  background: var(--color-white);
+  box-shadow: 0 0 0 3px var(--color-fg-10);
 }
 
+/* Botón primario — sólido oscuro pill */
 .rc-btn {
   margin-top: 1.25rem;
   width: 100%;
   padding: 0.85rem;
-  background: #0077cc;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border: 1px solid var(--color-fg);
+  border-radius: var(--r-pill);
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              transform var(--transition-fast);
 }
 
 .rc-btn:hover:not(:disabled) {
-  background: #005fa3;
+  background: transparent;
+  color: var(--color-fg);
 }
 
 .rc-btn:active:not(:disabled) {
@@ -136,28 +151,30 @@
 }
 
 .rc-btn:disabled {
-  background: #a0c4e8;
+  background: var(--color-stone);
+  border-color: var(--color-stone);
+  color: var(--color-white);
   cursor: not-allowed;
 }
 
 .rc-mensaje {
   margin-top: 1rem;
   padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--r-xs);
   font-size: 0.93rem;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .rc-exito {
-  background: #eaf7ef;
-  color: #1a7a3f;
-  border: 1px solid #b6e5cc;
+  background: var(--color-green);
+  color: var(--color-teal);
+  border: 1px solid var(--color-green);
 }
 
 .rc-error {
-  background: #fef0f0;
-  color: #c0392b;
-  border: 1px solid #f5c0be;
+  background: #F6D7CD;                  /* tinte suave del naranja del sistema */
+  color: #8A2E16;
+  border: 1px solid var(--color-orange);
 }
 
 @media (max-width: 540px) {
@@ -169,12 +186,12 @@
   }
 }
 
-/* Banner demo */
+/* Banner demo → tinte lima del sistema */
 .rc-banner-demo {
-  background: #fff8e1;
-  border: 1px solid #ffe082;
-  color: #7a5f00;
-  border-radius: 8px;
+  background: var(--color-lime);
+  border: 1px solid var(--color-tan);
+  color: var(--color-teal);
+  border-radius: var(--r-xs);
   padding: 0.65rem 1rem;
   font-size: 0.88rem;
   margin-bottom: 1.2rem;
@@ -187,8 +204,8 @@
 
 .rc-lista-demo h2 {
   font-size: 1rem;
-  font-weight: 700;
-  color: #333;
+  font-weight: var(--fw-medium);
+  color: var(--color-fg);
   margin-bottom: 0.75rem;
 }
 
@@ -196,9 +213,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  border: 1px solid #e4e4e4;
-  border-radius: 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-sm);
   padding: 0.75rem 1rem;
   margin-bottom: 0.5rem;
   gap: 1rem;
@@ -211,45 +228,49 @@
   flex-wrap: wrap;
 }
 
+/* Badge tipo cliente → category-tag del sistema (pill) */
 .rc-badge {
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   padding: 0.2rem 0.6rem;
-  border-radius: 20px;
+  border-radius: var(--r-md);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
 }
 
 .rc-badge.empresa {
-  background: #e8f3fc;
-  color: #0077cc;
+  background: var(--color-blue);
+  color: var(--color-teal);
 }
 
 .rc-badge.persona {
-  background: #eaf7ef;
-  color: #1a7a3f;
+  background: var(--color-green);
+  color: var(--color-teal);
 }
 
 .rc-item-rut {
   font-size: 0.82rem;
-  color: #888;
+  color: var(--color-stone);
 }
 
 .rc-item-extra {
   font-size: 0.82rem;
-  color: #aaa;
+  color: var(--color-fg-50);
 }
 
 .rc-btn-eliminar {
   background: none;
   border: none;
-  color: #ccc;
+  color: var(--color-fg-50);
   font-size: 1rem;
   cursor: pointer;
   padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  transition: color 0.2s, background 0.2s;
+  border-radius: var(--r-xs);
+  transition: color var(--transition-base),
+              background var(--transition-base);
 }
 
 .rc-btn-eliminar:hover {
-  color: #c0392b;
-  background: #fef0f0;
+  color: var(--color-orange);
+  background: #F6D7CD;
 }

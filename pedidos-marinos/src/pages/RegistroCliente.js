@@ -162,7 +162,7 @@ function RegistroCliente() {
           <h2 className="rc-seccion-titulo">Límite de deuda</h2>
           <div className="rc-campo">
             <label>Monto máximo de crédito</label>
-            <input type="text" value="$100.000" readOnly disabled style={{ backgroundColor: '#f0f0f0' }} />
+            <input type="text" value="$100.000" readOnly disabled style={{ backgroundColor: 'var(--color-mist)' }} />
             <small>Valor fijo asignado por la empresa.</small>
           </div>
         </div>

@@ -198,7 +198,7 @@ export default function PedidosForm() {
 
       <div
         className="datos-cliente"
-        style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f0f9ff', borderRadius: '12px' }}
+        style={{ marginBottom: '1.5rem', padding: '1rem', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--r-sm)' }}
       >
         <p>
           <strong>Cliente:</strong> {clienteActualizado?.nombre} {clienteActualizado?.apellido}
@@ -226,13 +226,13 @@ export default function PedidosForm() {
       </div>
 
       {clienteBloqueado && (
-        <div className="mensaje" style={{ background: '#fee2e2', color: '#991b1b', marginBottom: '1rem' }}>
+        <div className="mensaje" style={{ background: '#F6D7CD', color: '#8A2E16', marginBottom: '1rem' }}>
           Tu cuenta está bloqueada. No puedes aceptar pedidos en este momento.
         </div>
       )}
 
       {!clienteBloqueado && evaluacionPedido && !evaluacionPedido.aceptado && totalGeneral > 0 && (
-        <div className="mensaje" style={{ background: '#fef3c7', color: '#92400e', marginBottom: '1rem' }}>
+        <div className="mensaje" style={{ background: 'var(--color-lime)', color: 'var(--color-teal)', marginBottom: '1rem' }}>
           {evaluacionPedido.motivo}
         </div>
       )}

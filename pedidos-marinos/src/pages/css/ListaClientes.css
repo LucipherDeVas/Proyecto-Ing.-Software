@@ -1,52 +1,54 @@
-/* Asegurar que el contenedor del dashboard tenga ancho limitado */
+/* Lista de clientes — restyling al sistema "Floema" (guia_web/).
+   Selectores intactos; solo estilos visuales. */
+
+/* Contenedor del dashboard con ancho limitado */
 .dc-container {
   max-width: 1200px;
-  margin: 0 auto;        /* centrar */
+  margin: 0 auto;
   width: 100%;
-  padding: 0 1rem;       /* opcional: separación en móviles */
+  padding: 0 1rem;
 }
 
-/* Para que los controles no se estiren innecesariamente */
+/* Controles superiores */
 .dc-controles {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;   /* cambia de 'stretch' a 'center' */
+  gap: var(--sp-sm);
+  align-items: center;
   margin-bottom: 1.25rem;
 }
 
-/* El input de búsqueda puede crecer pero con un límite */
+/* Input de búsqueda */
 .dc-input {
-  flex: 1 1 280px;       /* puede crecer hasta cierto punto */
+  flex: 1 1 280px;
   min-width: 180px;
-  max-width: 400px;      /* no se estira más de 400px */
+  max-width: 400px;
   padding: 0.65rem 0.85rem;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  /* resto igual */
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-sm);
 }
 
-/* El botón recargar NO debe crecer */
+/* Botón recargar: mantiene su tamaño natural */
 .dc-btn-recargar {
-  flex: 0 0 auto;        /* mantiene su tamaño natural */
+  flex: 0 0 auto;
   padding: 0.65rem 1.25rem;
-  white-space: nowrap;   /* evita que el texto se rompa */
+  white-space: nowrap;
 }
 
-/* Opcional: si la tabla se sale en pantallas pequeñas, el wrap ya lo maneja */
+/* Wrap de tabla con scroll horizontal */
 .dc-tabla-wrap {
   overflow-x: auto;
-  border-radius: 10px;
+  border-radius: var(--r-md);
 }
 
 .dc-btn-icon {
-  border: none;
-  border-radius: 6px;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-xs);
   padding: 4px 8px;
-  font-weight: bold;
+  font-weight: var(--fw-medium);
   cursor: pointer;
   font-size: 0.85rem;
-  transition: opacity 0.2s;
+  transition: opacity var(--transition-base);
 }
 
 .dc-btn-icon:hover {

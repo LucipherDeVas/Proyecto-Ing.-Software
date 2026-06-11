@@ -1,4 +1,6 @@
-/* src/pages/css/Reportes.css */
+/* src/pages/css/Reportes.css
+   Restyling al sistema "Floema" (guia_web/).
+   Selectores intactos; solo estilos visuales. */
 
 /* ── Contenedor ──────────────────────────────────────────── */
 .rp-container {
@@ -21,40 +23,40 @@
   justify-content: center;
   gap: 0.2rem;
   padding: 1rem 0.75rem 0.9rem;
-  background: #f7f9fc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  transition: box-shadow 0.18s;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-sm);
+  transition: box-shadow var(--transition-base);
 }
 .rp-metrica:hover {
-  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  box-shadow: var(--shadow-soft);
 }
 
 .rp-num {
   font-size: 1.55rem;
-  font-weight: 700;
-  color: #1a202c;
+  font-weight: var(--fw-medium);
+  color: var(--color-fg);
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--ls-heading);
 }
 
 .rp-lbl {
-  font-size: 0.7rem;
+  font-size: var(--fs-label);
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #718096;
-  font-weight: 600;
+  letter-spacing: var(--ls-upper);
+  color: var(--color-stone);
+  font-weight: var(--fw-medium);
 }
 
-/* variantes de color */
-.rp-m-monto                { background: #ebf8ff; border-color: #bee3f8; }
-.rp-m-monto  .rp-num       { color: #2b6cb0; }
-.rp-m-ok                   { background: #f0fff4; border-color: #c6f6d5; }
-.rp-m-ok     .rp-num       { color: #276749; }
-.rp-m-warn                 { background: #fffbeb; border-color: #fde68a; }
-.rp-m-warn   .rp-num       { color: #92400e; }
-.rp-m-danger               { background: #fff5f5; border-color: #fed7d7; }
-.rp-m-danger .rp-num       { color: #c53030; }
+/* Variantes de color → paleta de acentos del sistema */
+.rp-m-monto                { background: var(--color-blue);  border-color: var(--color-blue); }
+.rp-m-monto  .rp-num       { color: var(--color-teal); }
+.rp-m-ok                   { background: var(--color-green); border-color: var(--color-green); }
+.rp-m-ok     .rp-num       { color: var(--color-teal); }
+.rp-m-warn                 { background: var(--color-tan);   border-color: var(--color-tan); }
+.rp-m-warn   .rp-num       { color: var(--color-teal); }
+.rp-m-danger               { background: var(--color-orange); border-color: var(--color-orange); }
+.rp-m-danger .rp-num       { color: var(--color-white); }
 
 /* ── Filtros ─────────────────────────────────────────────── */
 .rp-filtros {
@@ -72,11 +74,11 @@
 }
 
 .rp-flabel {
-  font-size: 0.7rem;
+  font-size: var(--fs-label);
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #718096;
-  font-weight: 700;
+  letter-spacing: var(--ls-upper);
+  color: var(--color-stone);
+  font-weight: var(--fw-medium);
 }
 
 .rp-fg-acciones {
@@ -86,76 +88,81 @@
   margin-left: auto;
 }
 
+/* Botón "Limpiar" — variante ghost/outline (secundaria).
+   !important necesario: comparte elemento con .rc-btn (botón
+   primario sólido, misma especificidad) y debe ganar sin
+   depender del orden de import del bundle. */
 .rp-btn-limpiar {
-  background: #fff !important;
-  color: #e53e3e !important;
-  border: 1px solid #fc8181 !important;
+  background: transparent !important;
+  color: var(--color-orange) !important;
+  border: 1px solid var(--color-orange) !important;
 }
 .rp-btn-limpiar:hover:not(:disabled) {
-  background: #fff5f5 !important;
+  background: #F6D7CD !important;
   box-shadow: none !important;
 }
 
 /* ── Tabla específica ────────────────────────────────────── */
-.rp-tabla .rp-id-col     { color: #a0aec0; font-size: 0.82rem; }
+.rp-tabla .rp-id-col     { color: var(--color-fg-50); font-size: 0.82rem; }
 .rp-tabla .rp-fecha-col  { white-space: nowrap; }
-.rp-tabla .rp-hora-col   { color: #718096; font-size: 0.84rem; white-space: nowrap; }
-.rp-tabla .rp-cliente-col{ font-weight: 600; }
-.rp-tabla .rp-rut-col    { font-size: 0.82rem; color: #718096; white-space: nowrap; }
-.rp-tabla .rp-total-col  { font-weight: 700; color: #2b6cb0; }
+.rp-tabla .rp-hora-col   { color: var(--color-stone); font-size: 0.84rem; white-space: nowrap; }
+.rp-tabla .rp-cliente-col{ font-weight: var(--fw-medium); }
+.rp-tabla .rp-rut-col    { font-size: 0.82rem; color: var(--color-stone); white-space: nowrap; }
+.rp-tabla .rp-total-col  { font-weight: var(--fw-medium); color: var(--color-fg); }
 
-/* franja lateral por estado */
-.rp-fila-entregado td:first-child { border-left: 3px solid #68d391; }
-.rp-fila-pendiente td:first-child { border-left: 3px solid #f6e05e; }
+/* Franja lateral por estado */
+.rp-fila-entregado td:first-child { border-left: 3px solid var(--color-green); }
+.rp-fila-pendiente td:first-child { border-left: 3px solid var(--color-tan); }
 .rp-fila-cancelado                { opacity: 0.72; }
-.rp-fila-cancelado td:first-child { border-left: 3px solid #fc8181; }
+.rp-fila-cancelado td:first-child { border-left: 3px solid var(--color-orange); }
 
 /* ── Badges de estado ────────────────────────────────────── */
 .rp-badge {
   display: inline-block;
   padding: 0.2em 0.65em;
-  border-radius: 999px;
+  border-radius: var(--r-md);
   font-size: 0.73rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
   white-space: nowrap;
 }
-.rp-badge-pendiente { background: #fefcbf; color: #744210; border: 1px solid #f6e05e; }
-.rp-badge-entregado { background: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
-.rp-badge-cancelado { background: #fed7d7; color: #742a2a; border: 1px solid #fc8181; }
+.rp-badge-pendiente { background: var(--color-tan);    color: var(--color-teal); border: 1px solid var(--color-tan); }
+.rp-badge-entregado { background: var(--color-green);  color: var(--color-teal); border: 1px solid var(--color-green); }
+.rp-badge-cancelado { background: var(--color-orange); color: var(--color-white); border: 1px solid var(--color-orange); }
 
 /* ── Observaciones expandibles ───────────────────────────── */
 .rp-obs-col { min-width: 85px; }
 
 .rp-obs-btn {
-  background: none;
-  border: 1px solid #cbd5e0;
-  border-radius: 5px;
+  background: var(--color-white);
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-xs);
   padding: 0.18em 0.6em;
   font-size: 0.75rem;
-  color: #4a5568;
+  color: var(--color-fg-70);
   cursor: pointer;
-  transition: background 0.14s;
+  transition: background var(--transition-fast);
   white-space: nowrap;
 }
 .rp-obs-btn:hover {
-  background: #edf2f7;
-  border-color: #a0aec0;
+  background: var(--color-mist);
+  border-color: var(--color-fg);
 }
 
 .rp-obs-texto {
   margin-top: 0.4rem;
   font-size: 0.8rem;
-  color: #4a5568;
-  background: #f7fafc;
-  border-left: 3px solid #63b3ed;
+  color: var(--color-fg-70);
+  background: var(--color-mist);
+  border-left: 3px solid var(--color-blue);
   padding: 0.4rem 0.6rem;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 var(--r-xs) var(--r-xs) 0;
   max-width: 200px;
   line-height: 1.45;
 }
 
-.rp-obs-vacia { color: #cbd5e0; }
+.rp-obs-vacia { color: var(--color-fg-20); }
 
 /* ── Spinner de carga ────────────────────────────────────── */
 .dc-empty {
@@ -165,8 +172,8 @@
   display: inline-block;
   width: 15px;
   height: 15px;
-  border: 2px solid #e2e8f0;
-  border-top-color: #4299e1;
+  border: 2px solid var(--color-fg-20);
+  border-top-color: var(--color-fg);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   vertical-align: middle;

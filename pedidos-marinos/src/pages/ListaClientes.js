@@ -149,11 +149,12 @@ export default function ListaClientes() {
                 <td>
                   {editandoId === c.id ? (
                     <>
-                      <button onClick={() => guardarEdicion(c.id)} className="dc-btn-icon" style={{ background: '#28a745', marginRight: '5px' }}>✓</button>
-                      <button onClick={cancelarEdicion} className="dc-btn-icon" style={{ background: '#dc3545' }}>✗</button>
+                      {/* Colores de íconos mapeados a la paleta del sistema "Floema" */}
+                      <button onClick={() => guardarEdicion(c.id)} className="dc-btn-icon" style={{ background: 'var(--color-green)', color: 'var(--color-teal)', marginRight: '5px' }}>✓</button>
+                      <button onClick={cancelarEdicion} className="dc-btn-icon" style={{ background: 'var(--color-orange)', color: 'var(--color-white)' }}>✗</button>
                     </>
                   ) : (
-                    <button onClick={() => iniciarEdicion(c)} className="dc-btn-icon" style={{ background: '#ffc107', color: '#333' }}>✎</button>
+                    <button onClick={() => iniciarEdicion(c)} className="dc-btn-icon" style={{ background: 'var(--color-tan)', color: 'var(--color-teal)' }}>✎</button>
                   )}
                 </td>
               </tr>

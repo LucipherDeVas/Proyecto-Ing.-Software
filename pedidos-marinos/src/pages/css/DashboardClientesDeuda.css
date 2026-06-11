@@ -1,4 +1,6 @@
-/* Sobrescribe el ancho del contenedor base solo para el dashboard */
+/* Dashboard de deuda — restyling al sistema "Floema" (guia_web/).
+   Selectores intactos; solo estilos visuales (tabla + badges). */
+
 .dc-container {
   max-width: 1200px;
 }
@@ -6,7 +8,7 @@
 .dc-controles {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--sp-sm);
   align-items: stretch;
   margin-bottom: 1.25rem;
 }
@@ -14,18 +16,18 @@
 .dc-input {
   flex: 1 1 220px;
   padding: 0.65rem 0.85rem;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-sm);
+  background: var(--color-white);
   font-size: 0.95rem;
   font-family: inherit;
-  color: #1a1a1a;
+  color: var(--color-fg);
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color var(--transition-base);
 }
 
 .dc-input:focus {
-  border-color: #2b6cb0;
+  border-color: var(--color-fg);
 }
 
 .dc-btn-recargar {
@@ -35,9 +37,9 @@
 
 .dc-tabla-wrap {
   overflow-x: auto;
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
+  background: var(--color-surface);
 }
 
 .dc-tabla {
@@ -47,23 +49,26 @@
 }
 
 .dc-tabla thead th {
-  background: #f5f7fa;
+  background: var(--color-mist);
   text-align: left;
   padding: 0.75rem 0.85rem;
-  font-weight: 600;
-  color: #333;
-  border-bottom: 2px solid #e5e5e5;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
+  font-size: var(--fs-label);
+  color: var(--color-fg-70);
+  border-bottom: 1px solid var(--color-fg-20);
   white-space: nowrap;
 }
 
 .dc-tabla tbody td {
   padding: 0.7rem 0.85rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-fg-10);
   vertical-align: middle;
 }
 
 .dc-tabla tbody tr:hover {
-  background: #fafbfc;
+  background: var(--color-mist);
 }
 
 .dc-tabla .dc-num {
@@ -74,29 +79,48 @@
 
 .dc-empty {
   text-align: center;
-  color: #888;
+  color: var(--color-stone);
   padding: 2rem !important;
   font-style: italic;
 }
 
-/* Badges de estado financiero */
+/* Badges de estado financiero → paleta de category-tags del sistema */
 .dc-badge {
   display: inline-block;
   padding: 0.25rem 0.6rem;
-  border-radius: 999px;
+  border-radius: var(--r-md);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
   white-space: nowrap;
 }
 
-.dc-badge-ok      { background: #e6f6ec; color: #1f7a3a; }
-.dc-badge-info    { background: #e8f0fb; color: #1d4f91; }
-.dc-badge-warn    { background: #fff5d6; color: #8a6100; }
-.dc-badge-danger  { background: #fde2e2; color: #a11919; }
-.dc-badge-moroso  { background: #2b2b2b; color: #fff; }
+.dc-badge-ok      { background: var(--color-green);  color: var(--color-teal); }
+.dc-badge-info    { background: var(--color-blue);   color: var(--color-teal); }
+.dc-badge-warn    { background: var(--color-tan);    color: var(--color-teal); }
+.dc-badge-danger  { background: var(--color-orange); color: var(--color-white); }
+.dc-badge-moroso  { background: var(--color-teal);   color: var(--color-lime); }
 
 .dc-resumen {
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--color-fg-70);
+}
+
+/* Botones de íconos en tabla */
+.dc-btn-icon {
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-xs);
+  padding: 4px 8px;
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  font-size: 0.85rem;
+  background: var(--color-white);
+  color: var(--color-fg);
+  transition: opacity var(--transition-base);
+}
+
+.dc-btn-icon:hover {
+  opacity: 0.8;
 }
