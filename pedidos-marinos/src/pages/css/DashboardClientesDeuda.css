@@ -1,8 +1,16 @@
 /* Dashboard de deuda — restyling al sistema "Floema" (guia_web/).
    Selectores intactos; solo estilos visuales (tabla + badges). */
 
-.dc-container {
-  max-width: 1200px;
+/* /clientes (Dashboard): el contenedor se ensancha para que las 10
+   columnas —incluida "Estado"— se vean sin scroll horizontal.
+   Se usa la doble clase .dc-container.rc-container para ganar en
+   especificidad a .rc-container (max-width 1100/1200 según el bundle)
+   sin recurrir a !important. */
+.dc-container,
+.dc-container.rc-container {
+  max-width: 1500px;
+  padding-left: var(--grid-margin);
+  padding-right: var(--grid-margin);
 }
 
 .dc-controles {
@@ -45,13 +53,13 @@
 .dc-tabla {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.92rem;
+  font-size: 0.92rem;          /* antes 0.92rem — más compacto para que quepan las 10 columnas */
 }
 
 .dc-tabla thead th {
   background: var(--color-mist);
   text-align: left;
-  padding: 0.75rem 0.85rem;
+  padding: 0.7rem 0.85rem;     /* antes 0.75rem 0.85rem — gana espacio horizontal */
   font-weight: var(--fw-medium);
   text-transform: uppercase;
   letter-spacing: var(--ls-upper);
@@ -62,9 +70,16 @@
 }
 
 .dc-tabla tbody td {
-  padding: 0.7rem 0.85rem;
+  padding: 0.7rem 0.85rem;     /* antes 0.7rem 0.85rem */
   border-bottom: 1px solid var(--color-fg-10);
   vertical-align: middle;
+}
+
+/* El correo (columna 4) es el texto más largo: se le permite ajustarse
+   en vez de empujar el ancho de la tabla y cortar la columna "Estado". */
+.dc-tabla tbody td:nth-child(4) {
+  max-width: 200px;
+  word-break: break-word;
 }
 
 .dc-tabla tbody tr:hover {
@@ -101,6 +116,76 @@
 .dc-badge-warn    { background: var(--color-tan);    color: var(--color-teal); }
 .dc-badge-danger  { background: var(--color-orange); color: var(--color-white); }
 .dc-badge-moroso  { background: var(--color-teal);   color: var(--color-lime); }
+
+/* Indicador visual de cliente bloqueado */
+.dc-badge-bloqueado {
+  background: var(--color-fg);
+  color: var(--color-white);
+}
+
+/* Celda de estado: badge de estado + indicador de bloqueo apilados */
+.dc-estado-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+
+/* Fila de cliente bloqueado: tinte y franja lateral de aviso */
+.dc-fila-bloqueada {
+  background: rgba(247, 108, 70, 0.06);   /* tinte suave del naranja */
+}
+.dc-fila-bloqueada td:first-child {
+  border-left: 3px solid var(--color-orange);
+}
+
+/* Columna de acciones */
+.dc-acciones {
+  white-space: nowrap;
+}
+
+/* Input para editar la deuda inline */
+.dc-input-deuda {
+  width: 110px;
+  padding: 4px 6px;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-xs);
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--color-fg);
+  background: var(--color-white);
+  text-align: right;
+  outline: none;
+}
+.dc-input-deuda:focus {
+  border-color: var(--color-fg);
+}
+
+/* Botón "Actualizar deuda" (acción post-pedido) → pill ghost del sistema */
+.dc-btn-actualizar-deuda {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 6px 12px;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-pill);
+  background: var(--color-white);
+  color: var(--color-fg);
+  font-size: var(--fs-label);
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              border-color var(--transition-base);
+}
+.dc-btn-actualizar-deuda:hover {
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-color: var(--color-fg);
+}
 
 .dc-resumen {
   margin-top: 1rem;

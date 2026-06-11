@@ -15,19 +15,19 @@ import './App.css';
 
 // Componente interno para la sección de clientes (con toggle)
 function ClientesSection() {
-  const [vista, setVista] = useState('lista'); // cambiar valor inicial a 'lista'
+  const [vista, setVista] = useState('dashboard'); // por defecto abre el Dashboard de deuda
   return (
     <>
       <nav className="app-nav">
-        <button className={`app-nav-btn ${vista === 'lista' ? 'activo' : ''}`} onClick={() => setVista('lista')}>
-          Lista de clientes
-        </button>
         <button className={`app-nav-btn ${vista === 'dashboard' ? 'activo' : ''}`} onClick={() => setVista('dashboard')}>
           Dashboard de deuda
         </button>
+        <button className={`app-nav-btn ${vista === 'lista' ? 'activo' : ''}`} onClick={() => setVista('lista')}>
+          Lista de clientes
+        </button>
       </nav>
-      {vista === 'lista' && <ListaClientes />}
       {vista === 'dashboard' && <DashboardClientesDeuda />}
+      {vista === 'lista' && <ListaClientes />}
     </>
   );
 }

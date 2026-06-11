@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { listarClientes } from '../services/clientesService';
-import { calcularEstado, porcentajeUsado, nombreCliente } from '../utils/clienteDeuda';
+import { listarClientes, actualizarCliente } from '../services/clientesService';
+import { calcularEstado, porcentajeUsado, nombreCliente, estaClienteBloqueado } from '../utils/clienteDeuda';
 import './css/DashboardClientesDeuda.css';
 
 export { calcularEstado, porcentajeUsado, nombreCliente };
@@ -44,6 +44,11 @@ export default function DashboardClientesDeuda() {
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('');
 
+  // Edición inline para "Actualizar deuda post-pedido"
+  const [editandoId, setEditandoId] = useState(null);
+  const [editandoDeuda, setEditandoDeuda] = useState('');
+  const [guardando, setGuardando] = useState(false);
+
   const cargar = useCallback(async () => {
     setCargando(true);
     setError('');
@@ -69,6 +74,7 @@ export default function DashboardClientesDeuda() {
       _nombre: nombreCliente(c),
       _estado: calcularEstado(c),
       _porcentaje: porcentajeUsado(c),
+      _bloqueado: estaClienteBloqueado(c),
     }));
   }, [clientes]);
 
@@ -81,6 +87,41 @@ export default function DashboardClientesDeuda() {
       return campos.some(s => s.includes(q));
     });
   }, [filas, busqueda, filtroEstado]);
+
+  // ── Actualizar deuda post-pedido ──────────────────────────────
+  const iniciarEdicionDeuda = (cliente) => {
+    setEditandoId(cliente.id);
+    setEditandoDeuda(String(cliente.deuda_actual ?? 0));
+    setError('');
+  };
+
+  const cancelarEdicion = () => {
+    setEditandoId(null);
+    setEditandoDeuda('');
+  };
+
+  const guardarDeuda = async (id) => {
+    const nuevaDeuda = parseFloat(editandoDeuda);
+    if (Number.isNaN(nuevaDeuda) || nuevaDeuda < 0) {
+      setError('Ingrese un monto de deuda válido (mayor o igual a 0).');
+      return;
+    }
+    setGuardando(true);
+    try {
+      await actualizarCliente(id, { deuda_actual: nuevaDeuda });
+      // Reflejar el cambio en el estado local → estado y bloqueo se recalculan solos
+      setClientes(prev => prev.map(c =>
+        c.id === id ? { ...c, deuda_actual: nuevaDeuda } : c
+      ));
+      setEditandoId(null);
+      setEditandoDeuda('');
+      setError('');
+    } catch (err) {
+      setError(`Error al actualizar la deuda: ${err.message}`);
+    } finally {
+      setGuardando(false);
+    }
+  };
 
   return (
     <div className="rc-container dc-container">
@@ -136,12 +177,13 @@ export default function DashboardClientesDeuda() {
               <th className="dc-num">% usado</th>
               <th>Vencimiento</th>
               <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {!cargando && filasFiltradas.length === 0 && (
               <tr>
-                <td colSpan="10" className="dc-empty">
+                <td colSpan="11" className="dc-empty">
                   {clientes.length === 0
                     ? 'No hay clientes registrados.'
                     : 'Ningún cliente coincide con los filtros.'}
@@ -149,19 +191,84 @@ export default function DashboardClientesDeuda() {
               </tr>
             )}
             {filasFiltradas.map(f => (
-              <tr key={f.id}>
+              <tr key={f.id} className={f._bloqueado ? 'dc-fila-bloqueada' : undefined}>
                 <td>{f._nombre}</td>
                 <td>{f.tipo === 'empresa' ? '🏢 Empresa' : '👤 Persona'}</td>
                 <td>{f.rut}</td>
                 <td>{f.correo || '—'}</td>
                 <td>{f.telefono || '—'}</td>
-                <td className="dc-num">{formatoCLP.format(Number(f.deuda_actual ?? 0))}</td>
+
+                {/* Deuda actual — editable inline (Actualizar deuda post-pedido) */}
+                <td className="dc-num">
+                  {editandoId === f.id ? (
+                    <input
+                      type="number"
+                      className="dc-input-deuda"
+                      value={editandoDeuda}
+                      onChange={(e) => setEditandoDeuda(e.target.value)}
+                      min="0"
+                      step="1"
+                      autoFocus
+                    />
+                  ) : (
+                    formatoCLP.format(Number(f.deuda_actual ?? 0))
+                  )}
+                </td>
+
                 <td className="dc-num">{formatoCLP.format(Number(f.limite_deuda ?? 0))}</td>
                 <td className="dc-num">
                   {f._porcentaje === null ? '—' : `${f._porcentaje.toFixed(1)}%`}
                 </td>
                 <td>{formatoFecha(f.fecha_vencimiento_deuda)}</td>
-                <td><span className={badgeClass(f._estado)}>{f._estado}</span></td>
+
+                {/* Estado + indicador visual de bloqueo */}
+                <td>
+                  <div className="dc-estado-cell">
+                    <span className={badgeClass(f._estado)}>{f._estado}</span>
+                    {f._bloqueado && (
+                      <span
+                        className="dc-badge dc-badge-bloqueado"
+                        title="Cliente bloqueado: no puede generar pedidos (inactivo, moroso o límite superado)"
+                      >
+                        🔒 Bloqueado
+                      </span>
+                    )}
+                  </div>
+                </td>
+
+                {/* Acciones: actualizar deuda post-pedido */}
+                <td className="dc-acciones">
+                  {editandoId === f.id ? (
+                    <>
+                      <button
+                        onClick={() => guardarDeuda(f.id)}
+                        className="dc-btn-icon"
+                        style={{ background: 'var(--color-green)', color: 'var(--color-teal)', marginRight: '5px' }}
+                        disabled={guardando}
+                        title="Guardar nueva deuda"
+                      >
+                        {guardando ? '…' : '✓'}
+                      </button>
+                      <button
+                        onClick={cancelarEdicion}
+                        className="dc-btn-icon"
+                        style={{ background: 'var(--color-orange)', color: 'var(--color-white)' }}
+                        disabled={guardando}
+                        title="Cancelar"
+                      >
+                        ✗
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => iniciarEdicionDeuda(f)}
+                      className="dc-btn-actualizar-deuda"
+                      title="Actualizar la deuda del cliente tras un pedido o pago"
+                    >
+                      💰 Actualizar deuda
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
