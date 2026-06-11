@@ -1,8 +1,111 @@
+/* ============================================================
+   index.css — BASE GLOBAL + DESIGN TOKENS
+   Sistema de diseño "Floema" aplicado desde guia_web/
+   (variablescss.txt + css.txt + tipografy.txt + grid.txt)
+
+   NOTA: solo se cambian variables, tipografía y base visual.
+   No se modifica ninguna lógica, clase de negocio ni markup.
+   ============================================================ */
+
+/* Tipografía del sistema. Zimula es propietaria; DM Sans es la
+   alternativa de Google Fonts indicada en la guía (tipografy.txt). */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+:root {
+  /* ── COLORES (css.txt / variablescss.txt) ──────────────── */
+  --color-bg:        #F2EFEA;  /* fondo beige cálido */
+  --color-fg:        #241F21;  /* texto casi-negro */
+  --color-white:     #FFFFFF;
+  --color-surface:   #FAF9F5;  /* cards / superficies elevadas */
+  --color-mist:      #EBE7DF;  /* fondos alternativos suaves */
+
+  /* Acentos */
+  --color-lime:      #E9E778;  /* footer / highlights */
+  --color-teal:      #042D2B;  /* sección oscura / estados graves */
+  --color-orange:    #F76C46;  /* CTA activos / alertas */
+  --color-tan:       #C6AF88;
+  --color-blue:      #85A1C5;
+  --color-green:     #BAD0A3;
+  --color-silver:    #D2CDC4;
+  --color-stone:     #988F8B;  /* textos terciarios */
+
+  /* Transparencias del foreground */
+  --color-fg-70:     rgba(36, 31, 33, 0.70);  /* texto muted */
+  --color-fg-50:     rgba(36, 31, 33, 0.50);  /* texto sutil */
+  --color-fg-20:     rgba(36, 31, 33, 0.20);  /* bordes / divisores */
+  --color-fg-10:     rgba(36, 31, 33, 0.10);  /* bordes finos */
+  --color-overlay:   rgba(31, 30, 29, 0.40);  /* overlay imágenes */
+  --color-border:    var(--color-fg-10);
+
+  /* ── TIPOGRAFÍA (tipografy.txt) ────────────────────────── */
+  --font-family:     'DM Sans', sans-serif;
+  --fw-light:        300;
+  --fw-regular:      400;   /* peso principal, incluso en headings */
+  --fw-medium:       500;
+
+  --fs-hero:         clamp(2.2rem, 4vw + 1rem, 3.6rem);
+  --fs-h1:           clamp(1.8rem, 3.5vw + .5rem, 3.3rem);
+  --fs-h2:           clamp(1.6rem, 2.8vw + .4rem, 2.96rem);
+  --fs-h3:           clamp(1.2rem, 2vw + .3rem, 2.0rem);
+  --fs-body-lg:      clamp(1rem, .5vw + .8rem, 1.11rem);
+  --fs-body:         0.875rem;   /* 14px */
+  --fs-label:        0.75rem;    /* 12px */
+
+  --lh-tight:        1.05;
+  --lh-snug:         1.15;
+  --lh-normal:       1.40;
+  --lh-relaxed:      1.6;
+
+  --ls-heading:      -0.04em;
+  --ls-body:         -0.02em;
+  --ls-upper:        0.08em;
+
+  /* ── ESPACIADO (variablescss.txt) ──────────────────────── */
+  --sp-xs:   0.5rem;
+  --sp-sm:   0.75rem;
+  --sp-md:   1rem;
+  --sp-lg:   1.5rem;
+  --sp-xl:   2.5rem;
+  --sp-2xl:  4rem;
+  --sp-3xl:  6rem;
+
+  /* ── GRID (grid.txt) ───────────────────────────────────── */
+  --grid-gap:     clamp(14px, 9.71px + 100vw * 0.011, 28px);
+  --grid-margin:  clamp(16px, 10.15px + 100vw * 0.015, 36px);
+
+  /* ── BORDES ────────────────────────────────────────────── */
+  --r-pill:  100px;
+  --r-lg:    30px;
+  --r-md:    16px;
+  --r-sm:    12px;
+  --r-xs:    8px;
+
+  /* ── SOMBRAS ───────────────────────────────────────────── */
+  --shadow-soft:  0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card:  0 8px 32px rgba(0, 0, 0, 0.12);
+
+  /* ── TRANSICIONES ──────────────────────────────────────── */
+  --transition-fast:  150ms ease;
+  --transition-base:  300ms ease;
+
+  /* ── NAV ───────────────────────────────────────────────── */
+  --nav-h:  86px;
+}
+
+/* ── RESET base (alineado al example.html de la guía) ────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-family);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--ls-body);
+  color: var(--color-fg);
+  background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -10,4 +113,18 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* ── Headings: todos en weight 400 con letter-spacing negativo
+      (la clave del look elegante, según tipografy.txt) ────── */
+h1, h2, h3, h4 {
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-heading);
+  color: var(--color-fg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }

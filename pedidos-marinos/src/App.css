@@ -1,43 +1,112 @@
-/* ========== Estilos originales del proyecto (App) ========== */
+/* ========== Estilos del proyecto (App) ==========
+   Restyling visual al sistema "Floema" (guia_web/).
+   Selectores y clases SIN CAMBIOS — solo se actualizan
+   colores, tipografía, espaciado, bordes y componentes. */
+
 .App {
   text-align: center;
 }
 
-/* Navegación entre vistas */
+/* ===== Nav superior (antes estilos inline en App.js) =====
+   Barra del sistema "Floema": fondo beige, borde inferior sutil,
+   links en mayúsculas tipo pill. */
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-md);
+  padding: 0 var(--grid-margin);
+  min-height: var(--nav-h);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topnav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.topnav-link {
+  padding: 10px 16px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-body);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
+  color: var(--color-fg);
+  border: 1px solid transparent;
+  transition: background-color var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.topnav-link:hover {
+  background: var(--color-fg-10);
+  border-color: var(--color-fg-20);
+}
+
+/* Botón cerrar sesión → ghost con acento naranja (acción secundaria) */
+.topnav-logout {
+  background: transparent;
+  color: var(--color-fg);
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-pill);
+  padding: 9px 18px;
+  font-size: var(--fs-label);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
+  cursor: pointer;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              border-color var(--transition-base);
+}
+
+.topnav-logout:hover {
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-color: var(--color-fg);
+}
+
+/* Navegación entre vistas (toggle Lista / Dashboard)
+   → pill buttons del sistema (COMPONENTES.txt) */
 .app-nav {
   display: flex;
-  gap: 0.5rem;
-  padding: 0.85rem 1.5rem;
-  background: #fff;
-  border-bottom: 1px solid #e5e5e5;
+  gap: var(--sp-xs);
+  padding: 0.85rem var(--grid-margin);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
 .app-nav-btn {
-  padding: 0.55rem 1.1rem;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  background: #f5f7fa;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #444;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);          /* nav buttons: 12px */
+  background: transparent;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  text-transform: uppercase;           /* etiquetas en mayúsculas */
+  letter-spacing: var(--ls-upper);
+  color: var(--color-fg);
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.15s;
+  transition: background-color var(--transition-fast),
+              border-color var(--transition-fast);
 }
 
 .app-nav-btn:hover {
-  background: #eef1f6;
+  background: var(--color-fg-10);
+  border-color: var(--color-fg-20);
 }
 
 .app-nav-btn.activo {
-  background: #1a1a1a;
-  color: #fff;
-  border-color: #1a1a1a;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-color: var(--color-fg);
 }
 
+/* Restos del template CRA (no usados en la app) */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -50,18 +119,18 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--color-teal);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: var(--color-white);
 }
 
 .App-link {
-  color: #61dafb;
+  color: var(--color-orange);
 }
 
 @keyframes App-logo-spin {
@@ -73,34 +142,37 @@
   }
 }
 
-/* ========== Estilos para el formulario de productos marinos ========== */
-/* Fondo general con degradado marino */
+/* ========== Formulario (productos / pedidos / login) ========== */
+/* Fondo general: beige plano del sistema (antes degradado marino) */
 body {
   margin: 0;
-  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--color-bg);
+  font-family: var(--font-family);
 }
 
-/* Contenedor principal - tarjeta blanca */
+/* Contenedor principal — card sobre superficie clara */
 .form-container {
   max-width: 550px;
   margin: 50px auto;
-  background: white;
-  border-radius: 30px;
-  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);          /* 30px */
+  box-shadow: var(--shadow-card);
   padding: 30px;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-base);
 }
 
 .form-container:hover {
   transform: translateY(-5px);
 }
 
-/* Título */
+/* Título — heading del sistema (weight 400, ls negativo) */
 h1 {
   text-align: center;
-  color: #0c4a6e;
-  font-size: 2rem;
+  color: var(--color-fg);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-heading);
   margin-bottom: 25px;
   display: flex;
   align-items: center;
@@ -119,56 +191,63 @@ h1::before {
 
 label {
   display: block;
-  font-weight: 600;
-  color: #0c4a6e;
+  font-weight: var(--fw-medium);
+  color: var(--color-fg);
   margin-bottom: 8px;
-  font-size: 0.95rem;
+  font-size: var(--fs-body);
 }
 
 input, select, textarea {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid #cbd5e1;
-  border-radius: 20px;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-sm);
   font-size: 1rem;
-  transition: all 0.3s;
-  background-color: #f8fafc;
+  font-family: inherit;
+  transition: border-color var(--transition-base),
+              box-shadow var(--transition-base);
+  background-color: var(--color-white);
+  color: var(--color-fg);
   box-sizing: border-box;
 }
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
-  background-color: white;
+  border-color: var(--color-fg);
+  box-shadow: 0 0 0 3px var(--color-fg-10);
+  background-color: var(--color-white);
 }
 
-/* Botón */
+/* Botón primario — sólido oscuro del sistema (.btn--solid) */
 .submit-btn {
-  background: linear-gradient(135deg, #0284c7, #0ea5e9);
-  color: white;
-  border: none;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border: 1px solid var(--color-fg);
   padding: 14px 25px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  border-radius: 40px;
+  font-size: var(--fs-body-lg);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
+  border-radius: var(--r-pill);        /* pill */
   width: 100%;
   cursor: pointer;
-  transition: 0.2s;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              transform var(--transition-fast);
 }
 
 .submit-btn:hover {
-  background: linear-gradient(135deg, #0369a1, #0284c7);
-  transform: scale(1.02);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  background: transparent;
+  color: var(--color-fg);
+  transform: translateY(-1px);
 }
 
 .submit-btn:disabled {
-  background: #94a3b8;
+  background: var(--color-stone);
+  border-color: var(--color-stone);
+  color: var(--color-white);
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
   opacity: 0.7;
 }
 
@@ -176,21 +255,21 @@ input:focus, select:focus, textarea:focus {
 .mensaje {
   margin-top: 25px;
   padding: 12px;
-  background: #f1f5f9;
-  border-left: 5px solid #0ea5e9;
-  border-radius: 15px;
-  color: #0c4a6e;
-  font-weight: 500;
+  background: var(--color-mist);
+  border-left: 4px solid var(--color-orange);
+  border-radius: var(--r-sm);
+  color: var(--color-fg);
+  font-weight: var(--fw-medium);
   text-align: center;
 }
 
-/* Pequeño detalle decorativo opcional */
+/* Detalle decorativo opcional */
 .ola {
   background: repeating-linear-gradient(
     transparent,
     transparent 48px,
-    rgba(14, 165, 233, 0.1) 48px,
-    rgba(14, 165, 233, 0.1) 52px
+    var(--color-fg-10) 48px,
+    var(--color-fg-10) 52px
   );
   height: 10px;
 }

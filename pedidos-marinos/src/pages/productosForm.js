@@ -125,7 +125,9 @@ export default function ProductosForm() {
       <h2>Administración de Productos</h2>
       
       {/* Formulario para agregar/editar */}
-      <form onSubmit={handleSubmit} style={{ marginBottom: '2rem', border: '1px solid #ccc', padding: '1rem', borderRadius: '8px' }}>
+      {/* Restyling visual al sistema "Floema": colores/bordes vía tokens.
+          Estructura, handlers y estado SIN CAMBIOS. */}
+      <form onSubmit={handleSubmit} style={{ marginBottom: '2rem', border: '1px solid var(--color-border)', background: 'var(--color-surface)', padding: '1rem', borderRadius: 'var(--r-md)' }}>
         <h3>{editandoId !== null ? 'Editar producto' : 'Agregar nuevo producto'}</h3>
         <div style={{ marginBottom: '1rem' }}>
           <label style={{ display: 'block', marginBottom: '0.25rem' }}>Nombre del producto *</label>
@@ -151,11 +153,11 @@ export default function ProductosForm() {
           />
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button type="submit" style={{ padding: '0.5rem 1rem', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          <button type="submit" style={{ padding: '0.5rem 1rem', backgroundColor: 'var(--color-fg)', color: 'var(--color-bg)', border: '1px solid var(--color-fg)', borderRadius: 'var(--r-pill)', cursor: 'pointer' }}>
             {editandoId !== null ? 'Actualizar' : 'Agregar'}
           </button>
           {editandoId !== null && (
-            <button type="button" onClick={cancelarEdicion} style={{ padding: '0.5rem 1rem', backgroundColor: '#999', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+            <button type="button" onClick={cancelarEdicion} style={{ padding: '0.5rem 1rem', backgroundColor: 'transparent', color: 'var(--color-fg)', border: '1px solid var(--color-fg-20)', borderRadius: 'var(--r-pill)', cursor: 'pointer' }}>
               Cancelar
             </button>
           )}
@@ -164,7 +166,7 @@ export default function ProductosForm() {
 
       {/* Mensajes informativos */}
       {mensaje && (
-        <div style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: '#e0f7fa', borderRadius: '4px' }}>
+        <div style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: 'var(--color-mist)', borderRadius: 'var(--r-xs)' }}>
           {mensaje}
         </div>
       )}
@@ -178,29 +180,29 @@ export default function ProductosForm() {
       ) : (
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ backgroundColor: '#f2f2f2' }}>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>ID</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Nombre</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Precio unitario</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>Acciones</th>
+            <tr style={{ backgroundColor: 'var(--color-mist)' }}>
+              <th style={{ border: '1px solid var(--color-border)', padding: '8px', textAlign: 'left' }}>ID</th>
+              <th style={{ border: '1px solid var(--color-border)', padding: '8px', textAlign: 'left' }}>Nombre</th>
+              <th style={{ border: '1px solid var(--color-border)', padding: '8px', textAlign: 'left' }}>Precio unitario</th>
+              <th style={{ border: '1px solid var(--color-border)', padding: '8px', textAlign: 'center' }}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {productos.map((prod) => (
               <tr key={prod.id}>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{prod.id}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{prod.nombre}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>${prod.precio_unitario.toLocaleString()}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                <td style={{ border: '1px solid var(--color-border)', padding: '8px' }}>{prod.id}</td>
+                <td style={{ border: '1px solid var(--color-border)', padding: '8px' }}>{prod.nombre}</td>
+                <td style={{ border: '1px solid var(--color-border)', padding: '8px' }}>${prod.precio_unitario.toLocaleString()}</td>
+                <td style={{ border: '1px solid var(--color-border)', padding: '8px', textAlign: 'center' }}>
                   <button
                     onClick={() => handleEditar(prod)}
-                    style={{ marginRight: '0.5rem', padding: '0.25rem 0.5rem', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    style={{ marginRight: '0.5rem', padding: '0.25rem 0.5rem', backgroundColor: 'transparent', color: 'var(--color-fg)', border: '1px solid var(--color-fg-20)', borderRadius: 'var(--r-xs)', cursor: 'pointer' }}
                   >
                     Editar
                   </button>
                   <button
                     onClick={() => handleEliminar(prod.id, prod.nombre)}
-                    style={{ padding: '0.25rem 0.5rem', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    style={{ padding: '0.25rem 0.5rem', backgroundColor: 'var(--color-orange)', color: 'white', border: '1px solid var(--color-orange)', borderRadius: 'var(--r-xs)', cursor: 'pointer' }}
                   >
                     Eliminar
                   </button>
