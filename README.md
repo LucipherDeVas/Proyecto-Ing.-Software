@@ -1,4 +1,4 @@
-# Versión 1.1
+# Versión 1.2
 
 Aplicación web para administrar clientes, productos, pedidos, deuda y reportes
 contables.
@@ -30,6 +30,17 @@ Se incorporó la generación de reportes contables:
 - Exportación en CSV compatible con Excel.
 - Pruebas automatizadas para los cálculos del reporte.
 
+### Gestión de deuda en el Dashboard de clientes
+
+Se incorporaron mejoras al listado de clientes del Dashboard:
+
+- Indicador visual de "bloqueado" en el listado de clientes del Dashboard:
+  cada cliente bloqueado (inactivo, moroso o con el límite de deuda superado)
+  se resalta con una insignia "🔒 Bloqueado" y una franja en su fila.
+- Actualizar Deuda Post-Pedido: acción por cliente que permite editar la deuda
+  actual desde el Dashboard y guardarla en Supabase; el estado financiero y el
+  bloqueo se recalculan automáticamente tras el cambio.
+
 ## Funcionalidades generales
 
 - Registro de clientes asociado a Supabase Authentication.
@@ -39,6 +50,8 @@ Se incorporó la generación de reportes contables:
 - Administración y consulta de clientes.
 - Edición de límites y datos financieros.
 - Dashboard de clientes y deuda.
+- Indicador visual de clientes bloqueados en el Dashboard.
+- Actualización de la deuda de un cliente desde el Dashboard (post-pedido).
 - Restricciones de pedidos según deuda y estado del cliente.
 - Reportes contables con exportación PDF y CSV.
 - Persistencia de datos en Supabase.
