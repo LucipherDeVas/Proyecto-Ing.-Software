@@ -67,7 +67,9 @@ export function descargarPdf(reporte) {
   const margen = 14;
   let y = margen;
 
-  doc.setFillColor(2, 132, 199);
+  // Banda de cabecera con identidad "Floema": fondo casi-negro (--color-fg)
+  // y subtítulo en lima (--color-lime), como las secciones oscuras de la web.
+  doc.setFillColor(36, 31, 33);        // --color-fg #241F21
   doc.rect(0, 0, 210, 28, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
@@ -75,9 +77,10 @@ export function descargarPdf(reporte) {
   doc.text(TITULO_EMPRESA, margen, 14);
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
+  doc.setTextColor(233, 231, 120);     // --color-lime #E9E778
   doc.text('Reporte Contable', margen, 21);
 
-  doc.setTextColor(30, 30, 30);
+  doc.setTextColor(36, 31, 33);        // --color-fg
   y = 36;
   doc.setFontSize(10);
   doc.text(`Periodo: ${reporte.rango.etiqueta}`, margen, y);
@@ -97,7 +100,8 @@ export function descargarPdf(reporte) {
       ['Pedidos cobrados', String(reporte.cantidadCobrados)],
     ],
     theme: 'grid',
-    headStyles: { fillColor: [2, 132, 199], textColor: 255 },
+    // Header en mist con texto oscuro, igual que las tablas de la web.
+    headStyles: { fillColor: [235, 231, 223], textColor: [36, 31, 33] },
     styles: { fontSize: 10 },
     margin: { left: margen, right: margen },
   });
@@ -121,7 +125,8 @@ export function descargarPdf(reporte) {
         f.estado,
       ]),
       theme: 'striped',
-      headStyles: { fillColor: [3, 105, 161] },
+      // Mismo header mist/oscuro que la tabla de resumen y las tablas web.
+      headStyles: { fillColor: [235, 231, 223], textColor: [36, 31, 33] },
       styles: { fontSize: 9 },
       margin: { left: margen, right: margen },
     });
@@ -131,7 +136,7 @@ export function descargarPdf(reporte) {
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
     doc.setFontSize(8);
-    doc.setTextColor(120, 120, 120);
+    doc.setTextColor(152, 143, 139);   // --color-stone
     doc.text(
       `Página ${i} de ${totalPages} — ${TITULO_EMPRESA}`,
       margen,
