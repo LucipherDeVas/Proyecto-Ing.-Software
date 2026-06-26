@@ -44,6 +44,13 @@
   border-color: var(--color-fg-20);
 }
 
+/* Grupo de cuenta (cambiar contraseña + cerrar sesión) */
+.topnav-cuenta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* Botón cerrar sesión → ghost con acento naranja (acción secundaria) */
 .topnav-logout {
   background: transparent;

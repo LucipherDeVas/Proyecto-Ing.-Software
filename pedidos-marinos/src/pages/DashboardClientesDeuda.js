@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { listarClientes, actualizarCliente } from '../services/clientesService';
 import { calcularEstado, porcentajeUsado, nombreCliente, estaClienteBloqueado } from '../utils/clienteDeuda';
+import { useAuth } from '../context/AuthContext';
+import SolicitudesCreditoPanel from './SolicitudesCreditoPanel';
 import './css/DashboardClientesDeuda.css';
 
 export { calcularEstado, porcentajeUsado, nombreCliente };
@@ -44,10 +46,12 @@ export default function DashboardClientesDeuda() {
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('');
 
-  // Edición inline para "Actualizar deuda post-pedido"
+  // Edición inline: actualizar deuda post-pedido y fecha de vencimiento
   const [editandoId, setEditandoId] = useState(null);
   const [editandoDeuda, setEditandoDeuda] = useState('');
+  const [editandoVencimiento, setEditandoVencimiento] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [bloqueandoId, setBloqueandoId] = useState(null);
 
   const cargar = useCallback(async () => {
     setCargando(true);
@@ -67,16 +71,22 @@ export default function DashboardClientesDeuda() {
     cargar();
   }, [cargar]);
 
+  // Id del usuario logueado, para no listarse a sí mismo (el admin
+  // también tiene una fila en `clientes` creada al registrarse).
+  const miUserId = useAuth()?.session?.user?.id;
+
   // Anota cada cliente con estado + % calculados una sola vez
   const filas = useMemo(() => {
-    return clientes.map(c => ({
-      ...c,
-      _nombre: nombreCliente(c),
-      _estado: calcularEstado(c),
-      _porcentaje: porcentajeUsado(c),
-      _bloqueado: estaClienteBloqueado(c),
-    }));
-  }, [clientes]);
+    return clientes
+      .filter(c => !miUserId || c.auth_user_id !== miUserId)
+      .map(c => ({
+        ...c,
+        _nombre: nombreCliente(c),
+        _estado: calcularEstado(c),
+        _porcentaje: porcentajeUsado(c),
+        _bloqueado: estaClienteBloqueado(c),
+      }));
+  }, [clientes, miUserId]);
 
   const filasFiltradas = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
@@ -88,38 +98,59 @@ export default function DashboardClientesDeuda() {
     });
   }, [filas, busqueda, filtroEstado]);
 
-  // ── Actualizar deuda post-pedido ──────────────────────────────
-  const iniciarEdicionDeuda = (cliente) => {
+  // ── Actualizar deuda post-pedido + fecha de vencimiento ───────
+  const iniciarEdicion = (cliente) => {
     setEditandoId(cliente.id);
     setEditandoDeuda(String(cliente.deuda_actual ?? 0));
+    setEditandoVencimiento((cliente.fecha_vencimiento_deuda || '').slice(0, 10));
     setError('');
   };
 
   const cancelarEdicion = () => {
     setEditandoId(null);
     setEditandoDeuda('');
+    setEditandoVencimiento('');
   };
 
-  const guardarDeuda = async (id) => {
+  const guardarCambios = async (id) => {
     const nuevaDeuda = parseFloat(editandoDeuda);
     if (Number.isNaN(nuevaDeuda) || nuevaDeuda < 0) {
       setError('Ingrese un monto de deuda válido (mayor o igual a 0).');
       return;
     }
+    const nuevoVenc = editandoVencimiento ? editandoVencimiento : null;
     setGuardando(true);
     try {
-      await actualizarCliente(id, { deuda_actual: nuevaDeuda });
+      await actualizarCliente(id, { deuda_actual: nuevaDeuda, fecha_vencimiento_deuda: nuevoVenc });
       // Reflejar el cambio en el estado local → estado y bloqueo se recalculan solos
       setClientes(prev => prev.map(c =>
-        c.id === id ? { ...c, deuda_actual: nuevaDeuda } : c
+        c.id === id ? { ...c, deuda_actual: nuevaDeuda, fecha_vencimiento_deuda: nuevoVenc } : c
       ));
       setEditandoId(null);
       setEditandoDeuda('');
+      setEditandoVencimiento('');
       setError('');
     } catch (err) {
-      setError(`Error al actualizar la deuda: ${err.message}`);
+      setError(`Error al actualizar el cliente: ${err.message}`);
     } finally {
       setGuardando(false);
+    }
+  };
+
+  // Bloquear / desbloquear cliente (campo `activo`)
+  const toggleActivo = async (cliente) => {
+    const nuevoActivo = cliente.activo === false; // inactivo → activar; activo → bloquear
+    setBloqueandoId(cliente.id);
+    setError('');
+    try {
+      await actualizarCliente(cliente.id, { activo: nuevoActivo });
+      setClientes(prev => prev.map(c =>
+        c.id === cliente.id ? { ...c, activo: nuevoActivo } : c
+      ));
+    } catch (err) {
+      setError(`Error al cambiar el bloqueo: ${err.message}`);
+    } finally {
+      setBloqueandoId(null);
     }
   };
 
@@ -130,6 +161,10 @@ export default function DashboardClientesDeuda() {
         Listado de clientes registrados y su estado financiero calculado a partir de la deuda actual,
         el límite y la fecha de vencimiento.
       </p>
+
+      {/* Notificaciones en vivo: solicitudes de aumento de crédito.
+          Al aprobar/rechazar se recarga la tabla para reflejar el nuevo límite. */}
+      <SolicitudesCreditoPanel onResuelta={cargar} />
 
       <div className="dc-controles">
         <input
@@ -219,7 +254,20 @@ export default function DashboardClientesDeuda() {
                 <td className="dc-num">
                   {f._porcentaje === null ? '—' : `${f._porcentaje.toFixed(1)}%`}
                 </td>
-                <td>{formatoFecha(f.fecha_vencimiento_deuda)}</td>
+
+                {/* Vencimiento de la deuda — editable inline (define "Moroso") */}
+                <td>
+                  {editandoId === f.id ? (
+                    <input
+                      type="date"
+                      className="dc-input-venc"
+                      value={editandoVencimiento}
+                      onChange={(e) => setEditandoVencimiento(e.target.value)}
+                    />
+                  ) : (
+                    formatoFecha(f.fecha_vencimiento_deuda)
+                  )}
+                </td>
 
                 {/* Estado + indicador visual de bloqueo */}
                 <td>
@@ -236,16 +284,16 @@ export default function DashboardClientesDeuda() {
                   </div>
                 </td>
 
-                {/* Acciones: actualizar deuda post-pedido */}
+                {/* Acciones: actualizar deuda/vencimiento y bloquear/desbloquear */}
                 <td className="dc-acciones">
                   {editandoId === f.id ? (
                     <>
                       <button
-                        onClick={() => guardarDeuda(f.id)}
+                        onClick={() => guardarCambios(f.id)}
                         className="dc-btn-icon"
                         style={{ background: 'var(--color-green)', color: 'var(--color-teal)', marginRight: '5px' }}
                         disabled={guardando}
-                        title="Guardar nueva deuda"
+                        title="Guardar deuda y vencimiento"
                       >
                         {guardando ? '…' : '✓'}
                       </button>
@@ -260,13 +308,27 @@ export default function DashboardClientesDeuda() {
                       </button>
                     </>
                   ) : (
-                    <button
-                      onClick={() => iniciarEdicionDeuda(f)}
-                      className="dc-btn-actualizar-deuda"
-                      title="Actualizar la deuda del cliente tras un pedido o pago"
-                    >
-                      💰 Actualizar deuda
-                    </button>
+                    <div className="dc-acciones-grupo">
+                      <button
+                        onClick={() => iniciarEdicion(f)}
+                        className="dc-btn-actualizar-deuda"
+                        title="Actualizar la deuda y el vencimiento tras un pedido o pago"
+                      >
+                        💰 Actualizar deuda
+                      </button>
+                      <button
+                        onClick={() => toggleActivo(f)}
+                        className={`dc-btn-bloqueo ${f.activo === false ? 'is-inactivo' : ''}`}
+                        disabled={bloqueandoId === f.id}
+                        title={f.activo === false
+                          ? 'Reactivar la cuenta del cliente'
+                          : 'Bloquear la cuenta del cliente (no podrá generar pedidos)'}
+                      >
+                        {bloqueandoId === f.id
+                          ? '…'
+                          : f.activo === false ? '🔓 Desbloquear' : '🔒 Bloquear'}
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>

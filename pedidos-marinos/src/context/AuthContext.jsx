@@ -44,8 +44,12 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut();
   };
 
+  // Rol tomado del metadata del usuario (se asigna en Supabase Auth).
+  const rol = session?.user?.user_metadata?.rol ?? null;
+  const esAdmin = rol === 'admin';
+
   return (
-    <AuthContext.Provider value={{ session, cliente, cargando, signOut }}>
+    <AuthContext.Provider value={{ session, cliente, cargando, rol, esAdmin, signOut }}>
       {children}
     </AuthContext.Provider>
   );

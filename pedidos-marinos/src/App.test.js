@@ -1,7 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
-
-// Aislamos App de las vistas reales (que importan Supabase)
 jest.mock('./views/RegistroCliente', () => () => <div>VISTA_REGISTRO</div>);
 jest.mock('./views/DashboardClientesDeuda', () => () => <div>VISTA_DASHBOARD</div>);
 
