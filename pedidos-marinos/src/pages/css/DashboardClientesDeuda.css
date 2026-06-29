@@ -1,5 +1,4 @@
-/* Dashboard de deuda — restyling al sistema "Floema" (guia_web/).
-   Selectores intactos; solo estilos visuales (tabla + badges). */
+/**/
 
 /* /clientes (Dashboard): el contenedor se ensancha para que las 10
    columnas —incluida "Estado"— se vean sin scroll horizontal.
@@ -159,6 +158,64 @@
 }
 .dc-input-deuda:focus {
   border-color: var(--color-fg);
+}
+
+/* Input para editar la fecha de vencimiento inline */
+.dc-input-venc {
+  padding: 4px 6px;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-xs);
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: var(--color-fg);
+  background: var(--color-white);
+  outline: none;
+}
+.dc-input-venc:focus {
+  border-color: var(--color-fg);
+}
+
+/* Grupo de acciones por fila (apiladas) */
+.dc-acciones-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+/* Botón bloquear / desbloquear → pill ghost del sistema */
+.dc-btn-bloqueo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 6px 12px;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-pill);
+  background: var(--color-white);
+  color: var(--color-fg);
+  font-size: var(--fs-label);
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              border-color var(--transition-base);
+}
+.dc-btn-bloqueo:hover {
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-color: var(--color-fg);
+}
+/* Cliente ya inactivo: el botón ofrece desbloquear (acento verde) */
+.dc-btn-bloqueo.is-inactivo {
+  border-color: var(--color-green);
+}
+.dc-btn-bloqueo.is-inactivo:hover {
+  background: var(--color-green);
+  color: var(--color-teal);
+  border-color: var(--color-green);
 }
 
 /* Botón "Actualizar deuda" (acción post-pedido) → pill ghost del sistema */

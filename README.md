@@ -1,4 +1,4 @@
-# Versión 1.2
+# Versión 1.3
 
 Aplicación web para administrar clientes, productos, pedidos, deuda y reportes
 contables.
@@ -41,6 +41,23 @@ Se incorporaron mejoras al listado de clientes del Dashboard:
   actual desde el Dashboard y guardarla en Supabase; el estado financiero y el
   bloqueo se recalculan automáticamente tras el cambio.
 
+### Gestión de pedidos, bloqueo y seguridad
+
+- Pantalla de Gestión de pedidos: listado real de pedidos con filtros y acciones
+  para registrar el pago, anular o reabrir; la deuda del cliente se actualiza
+  automáticamente vía trigger.
+- Bloqueo/desbloqueo manual de clientes y edición de la fecha de vencimiento de la
+  deuda desde el Dashboard (habilita el estado "Moroso").
+- Validación de crédito en el servidor mediante la función `crear_pedido_validado`.
+- Roles de administrador vs cliente: las vistas de administración solo se muestran
+  al rol `admin` y la base de datos aplica RLS por rol.
+- Solicitudes de aumento de crédito: el cliente pide un nuevo límite desde la vista
+  de pedidos y el administrador puede aprobarla (sube el límite) o rechazarla desde
+  el panel del Dashboard.
+- Notificaciones en vivo para el administrador (Supabase Realtime): al llegar una
+  solicitud aparece un aviso emergente con sonido en cualquier vista de la
+  aplicación, además de una notificación del navegador si se concede el permiso.
+
 ## Funcionalidades generales
 
 - Registro de clientes asociado a Supabase Authentication.
@@ -52,10 +69,13 @@ Se incorporaron mejoras al listado de clientes del Dashboard:
 - Dashboard de clientes y deuda.
 - Indicador visual de clientes bloqueados en el Dashboard.
 - Actualización de la deuda de un cliente desde el Dashboard (post-pedido).
+- Gestión de pedidos con registro de pago, anulación y reapertura.
+- Solicitudes de aumento de crédito con notificación en vivo al administrador.
+- Roles de administrador y cliente con control de acceso por rol.
 - Restricciones de pedidos según deuda y estado del cliente.
 - Reportes contables con exportación PDF y CSV.
 - Persistencia de datos en Supabase.
-- Políticas Row Level Security para el entorno de desarrollo.
+- Políticas Row Level Security (desarrollo y endurecidas por rol).
 
 ## Tecnologías
 
@@ -109,8 +129,38 @@ En Supabase, se debe abrir **SQL Editor** y ejecutar estos archivos en orden:
 3. `003_politicas_rls_desarrollo.sql`
 4. `004_datos_ejemplo.sql` (opcional)
 5. `005_verificacion.sql`
+6. `006_seguridad_roles_rls.sql`
+7. `007_solicitudes_credito.sql`
 
 Los archivos están en `pedidos-marinos/supabase/migrations/`.
+
+`007_solicitudes_credito.sql` crea la tabla de solicitudes y la agrega a la
+publicación de **Realtime**, para que las solicitudes lleguen en vivo al panel
+del administrador.
+
+### Rol de administrador
+
+Las vistas de administración (Gestión de pedidos, Productos, Clientes y Reportes)
+y la escritura en la base de datos quedan restringidas al rol `admin` tras ejecutar
+`006_seguridad_roles_rls.sql`. La creación de pedidos del cliente se valida en el
+servidor mediante la función `crear_pedido_validado`.
+
+Para marcar un usuario como administrador, en **Supabase → Authentication → Users**,
+editar su *User Metadata* con:
+
+```json
+{ "rol": "admin" }
+```
+
+o por SQL:
+
+```sql
+UPDATE auth.users
+SET raw_user_meta_data = raw_user_meta_data || '{"rol":"admin"}'
+WHERE email = 'admin@ejemplo.com';
+```
+
+El usuario debe cerrar e iniciar sesión para que el token refleje el nuevo rol.
 
 > `001_esquema_base.sql` elimina las tablas existentes. No debe ejecutarse si
 > hay datos que se necesiten conservar.

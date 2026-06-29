@@ -1,31 +1,34 @@
 /* src/pages/css/Reportes.css
-   Restyling al sistema "Floema" (guia_web/).
-   Selectores intactos; solo estilos visuales. */
+   Estilos visuales de Gestion de pedidos. */
 
 /* ── Contenedor ──────────────────────────────────────────── */
-.rp-container {
-  /* hereda .rc-container */
+.rp-container.rc-container {
+  max-width: 1500px;
+  width: 100%;
+  padding-left: var(--grid-margin);
+  padding-right: var(--grid-margin);
 }
 
 /* ── Tarjetas de métricas ────────────────────────────────── */
 .rp-metricas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1.6rem;
 }
 
 .rp-metrica {
-  flex: 1 1 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.2rem;
-  padding: 1rem 0.75rem 0.9rem;
+  gap: 0.35rem;
+  min-height: 104px;
+  padding: 1.1rem 0.9rem 1rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--r-sm);
+  text-align: center;
   transition: box-shadow var(--transition-base);
 }
 .rp-metrica:hover {
@@ -44,48 +47,95 @@
   font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: var(--ls-upper);
-  color: var(--color-stone);
+  color: var(--color-fg-70);
   font-weight: var(--fw-medium);
 }
 
 /* Variantes de color → paleta de acentos del sistema */
 .rp-m-monto                { background: var(--color-blue);  border-color: var(--color-blue); }
 .rp-m-monto  .rp-num       { color: var(--color-teal); }
+.rp-m-monto  .rp-lbl       { color: var(--color-teal); }
 .rp-m-ok                   { background: var(--color-green); border-color: var(--color-green); }
 .rp-m-ok     .rp-num       { color: var(--color-teal); }
+.rp-m-ok     .rp-lbl       { color: var(--color-teal); }
 .rp-m-warn                 { background: var(--color-tan);   border-color: var(--color-tan); }
 .rp-m-warn   .rp-num       { color: var(--color-teal); }
+.rp-m-warn   .rp-lbl       { color: var(--color-teal); }
 .rp-m-danger               { background: var(--color-orange); border-color: var(--color-orange); }
 .rp-m-danger .rp-num       { color: var(--color-white); }
+.rp-m-danger .rp-lbl       { color: var(--color-white); }
 
 /* ── Filtros ─────────────────────────────────────────────── */
 .rp-filtros {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.7rem;
-  margin-bottom: 1.25rem;
+  display: grid;
+  grid-template-columns:
+    minmax(300px, 2fr)
+    minmax(190px, 1fr)
+    minmax(160px, 0.8fr)
+    minmax(160px, 0.8fr)
+    auto;
+  align-items: end;
+  gap: 0.9rem;
+  margin-bottom: 1.4rem;
+  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-soft);
 }
 
 .rp-fg {
   display: flex;
   flex-direction: column;
   gap: 0.28rem;
+  min-width: 0;
+}
+
+.rp-fg-busqueda {
+  min-width: 280px;
+}
+
+.rp-fg-estado {
+  min-width: 190px;
+}
+
+.rp-fg-fecha {
+  min-width: 160px;
 }
 
 .rp-flabel {
   font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: var(--ls-upper);
-  color: var(--color-stone);
+  color: var(--color-fg-70);
   font-weight: var(--fw-medium);
+}
+
+.rp-filtros .dc-input {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0.78rem 0.95rem;
+  font-size: 1rem;
 }
 
 .rp-fg-acciones {
   display: flex;
   gap: 0.5rem;
   align-items: flex-end;
-  margin-left: auto;
+  justify-content: flex-end;
+  margin-left: 0;
+}
+
+.rp-fg-acciones .rc-btn {
+  width: auto;
+  min-width: 132px;
+  min-height: 46px;
+  margin-top: 0;
+  padding: 0.72rem 1.15rem;
+  white-space: nowrap;
 }
 
 /* Botón "Limpiar" — variante ghost/outline (secundaria).
@@ -103,6 +153,29 @@
 }
 
 /* ── Tabla específica ────────────────────────────────────── */
+.rp-container .dc-tabla-wrap {
+  min-height: 500px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.rp-tabla {
+  min-width: 1180px;
+  font-size: 0.95rem;
+}
+
+.rp-tabla thead th,
+.rp-tabla tbody td {
+  padding: 0.85rem 1rem;
+}
+
+.rp-tabla tbody td:nth-child(4) {
+  max-width: none;
+  word-break: normal;
+}
+
 .rp-tabla .rp-id-col     { color: var(--color-fg-50); font-size: 0.82rem; }
 .rp-tabla .rp-fecha-col  { white-space: nowrap; }
 .rp-tabla .rp-hora-col   { color: var(--color-stone); font-size: 0.84rem; white-space: nowrap; }
@@ -111,7 +184,7 @@
 .rp-tabla .rp-total-col  { font-weight: var(--fw-medium); color: var(--color-fg); }
 
 /* Franja lateral por estado */
-.rp-fila-entregado td:first-child { border-left: 3px solid var(--color-green); }
+.rp-fila-pagado td:first-child    { border-left: 3px solid var(--color-green); }
 .rp-fila-pendiente td:first-child { border-left: 3px solid var(--color-tan); }
 .rp-fila-cancelado                { opacity: 0.72; }
 .rp-fila-cancelado td:first-child { border-left: 3px solid var(--color-orange); }
@@ -128,8 +201,59 @@
   white-space: nowrap;
 }
 .rp-badge-pendiente { background: var(--color-tan);    color: var(--color-teal); border: 1px solid var(--color-tan); }
-.rp-badge-entregado { background: var(--color-green);  color: var(--color-teal); border: 1px solid var(--color-green); }
+.rp-badge-pagado    { background: var(--color-green);  color: var(--color-teal); border: 1px solid var(--color-green); }
 .rp-badge-cancelado { background: var(--color-orange); color: var(--color-white); border: 1px solid var(--color-orange); }
+
+/* ── Acciones de cambio de estado ────────────────────────── */
+.rp-acciones {
+  white-space: nowrap;
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.rp-accion {
+  padding: 5px 10px;
+  border: 1px solid var(--color-fg-20);
+  border-radius: var(--r-pill);
+  background: var(--color-white);
+  color: var(--color-fg);
+  font-size: var(--fs-label);
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-upper);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              border-color var(--transition-base);
+}
+.rp-accion:hover {
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-color: var(--color-fg);
+}
+
+/* Acción positiva (registrar pago) */
+.rp-accion-ok {
+  border-color: var(--color-green);
+}
+.rp-accion-ok:hover {
+  background: var(--color-green);
+  color: var(--color-teal);
+  border-color: var(--color-green);
+}
+
+/* Acción destructiva (anular) */
+.rp-accion-danger {
+  border-color: var(--color-orange);
+  color: var(--color-orange);
+}
+.rp-accion-danger:hover {
+  background: var(--color-orange);
+  color: var(--color-white);
+  border-color: var(--color-orange);
+}
 
 /* ── Observaciones expandibles ───────────────────────────── */
 .rp-obs-col { min-width: 85px; }
@@ -183,10 +307,27 @@
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 700px) {
-  .rp-metricas    { gap: 0.5rem; }
-  .rp-metrica     { flex: 1 1 calc(50% - 0.5rem); padding: 0.8rem 0.5rem; }
-  .rp-m-monto     { flex: 1 1 100%; }
-  .rp-filtros     { flex-direction: column; }
+  .rp-container.rc-container {
+    padding-left: var(--grid-margin);
+    padding-right: var(--grid-margin);
+  }
+  .rp-metricas    { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .rp-metrica     { min-height: 92px; padding: 0.8rem 0.5rem; }
+  .rp-m-monto     { grid-column: 1 / -1; }
+  .rp-filtros     { grid-template-columns: 1fr; }
+  .rp-fg-busqueda,
+  .rp-fg-estado,
+  .rp-fg-fecha    { min-width: 0; }
   .rp-fg-acciones { margin-left: 0; }
+  .rp-fg-acciones .rc-btn { flex: 1; min-width: 0; }
   .dc-tabla       { font-size: 0.8rem; }
+}
+
+@media (min-width: 701px) and (max-width: 1120px) {
+  .rp-filtros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rp-fg-acciones {
+    grid-column: 1 / -1;
+  }
 }

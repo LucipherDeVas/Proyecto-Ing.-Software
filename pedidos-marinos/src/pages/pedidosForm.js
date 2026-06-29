@@ -8,7 +8,15 @@ import {
   estaClienteBloqueado,
   evaluarPedido,
 } from '../utils/clienteDeuda';
+import SolicitarCredito from './SolicitarCredito';
 import '../App.css';
+import './css/Pedidos.css';
+
+const CLP = new Intl.NumberFormat('es-CL', {
+  style: 'currency',
+  currency: 'CLP',
+  maximumFractionDigits: 0,
+});
 
 export default function PedidosForm() {
   const { cliente } = useAuth();
@@ -102,6 +110,14 @@ export default function PedidosForm() {
     return total + calcularSubtotal(producto);
   }, 0);
 
+  const productosSeleccionados = productos.filter(
+    (prod) => (cantidades[prod.id] || 0) > 0
+  ).length;
+  const unidadesSeleccionadas = productos.reduce(
+    (total, prod) => total + Number(cantidades[prod.id] || 0),
+    0
+  );
+
   const clienteBloqueado = useMemo(
     () => estaClienteBloqueado(clienteActualizado),
     [clienteActualizado]
@@ -126,7 +142,7 @@ export default function PedidosForm() {
     }
 
     if (clienteBloqueado) {
-      setMensaje('❌ No puedes aceptar pedidos: tu cuenta está bloqueada.');
+      setMensaje('No puedes realizar pedidos: tu cuenta está bloqueada.');
       return;
     }
 
@@ -151,7 +167,7 @@ export default function PedidosForm() {
 
       if (resultado.procesado) {
         setMensaje(
-          `✅ Pedido #${resultado.pedido.id} aceptado. Total: $${totalGeneral.toLocaleString()}`
+          `Pedido #${resultado.pedido.id} aceptado. Total: ${CLP.format(totalGeneral)}`
         );
         setClienteActualizado((prev) => ({
           ...prev,
@@ -166,138 +182,240 @@ export default function PedidosForm() {
         setObservaciones('');
       } else {
         setMensaje(
-          `❌ Pedido #${resultado.pedido.id} rechazado: ${resultado.evaluacion.motivo}`
+          `Pedido #${resultado.pedido.id} rechazado: ${resultado.evaluacion.motivo}`
         );
       }
     } catch (error) {
       console.error(error);
-      setMensaje(`❌ Error: ${error.message}`);
+      setMensaje(`Error: ${error.message}`);
     } finally {
       setEnviando(false);
     }
   };
 
   if (cargando) {
-    return <div className="form-container">Cargando catálogo...</div>;
+    return (
+      <main className="pedidos-page">
+        <section className="pedidos-panel pedidos-empty">
+          Cargando catálogo...
+        </section>
+      </main>
+    );
   }
 
   if (productos.length === 0 && !cargando) {
     return (
-      <div className="form-container">
-        No hay productos disponibles. Por favor, agrega productos desde el panel de administración.
-      </div>
+      <main className="pedidos-page">
+        <section className="pedidos-panel pedidos-empty">
+          No hay productos disponibles. Por favor, agrega productos desde el panel de administración.
+        </section>
+      </main>
     );
   }
 
   const estadoFinanciero = clienteActualizado ? calcularEstado(clienteActualizado) : null;
+  const nombreCliente = [clienteActualizado?.nombre, clienteActualizado?.apellido]
+    .filter(Boolean)
+    .join(' ') || clienteActualizado?.razon_social || 'Cliente';
+  const deudaActual = Number(clienteActualizado?.deuda_actual ?? 0);
+  const limiteDeuda = Number(clienteActualizado?.limite_deuda ?? 0);
+  const deudaProyectada = deudaActual + totalGeneral;
+  const creditoDisponible = Math.max(limiteDeuda - deudaActual, 0);
+  const usoCredito = limiteDeuda > 0
+    ? Math.min(100, Math.max(0, (deudaProyectada / limiteDeuda) * 100))
+    : 0;
+  const estadoVisual = clienteBloqueado
+    ? 'danger'
+    : evaluacionPedido && !evaluacionPedido.aceptado
+      ? 'warn'
+      : 'ok';
 
   return (
-    <div className="form-container">
-      <h1>🐟 Formulario De Pedidos 🐟</h1>
-      <p>Ingresa las cantidades deseadas. El pedido se asociará automáticamente a tu cuenta.</p>
+    <>
+      <main className="pedidos-page">
+        <header className="pedidos-header">
+          <div>
+            <span className="pedidos-eyebrow">Pedido cliente</span>
+            <h1 className="pedidos-title">Nuevo pedido</h1>
+            <p className="pedidos-subtitle">
+              Selecciona productos, revisa el impacto en tu crédito y confirma el pedido.
+            </p>
+          </div>
+          <div className={`pedidos-status pedidos-status-${estadoVisual}`}>
+            <span>Estado</span>
+            <strong>{clienteBloqueado ? 'Bloqueado' : estadoFinanciero || 'Activo'}</strong>
+          </div>
+        </header>
 
-      <div
-        className="datos-cliente"
-        style={{ marginBottom: '1.5rem', padding: '1rem', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--r-sm)' }}
-      >
-        <p>
-          <strong>Cliente:</strong> {clienteActualizado?.nombre} {clienteActualizado?.apellido}
-        </p>
-        <p>
-          <strong>RUT:</strong> {clienteActualizado?.rut}
-        </p>
-        <p>
-          <strong>Correo:</strong> {clienteActualizado?.correo}
-        </p>
-        <p>
-          <strong>Deuda actual:</strong> ${Number(clienteActualizado?.deuda_actual ?? 0).toLocaleString()}
-        </p>
-        <p>
-          <strong>Límite de deuda:</strong> ${Number(clienteActualizado?.limite_deuda ?? 0).toLocaleString()}
-        </p>
-        {estadoFinanciero && (
-          <p>
-            <strong>Estado financiero:</strong> {estadoFinanciero}
-          </p>
-        )}
-        <p>
-          <strong>Fecha del pedido:</strong> {fechaPedido}
-        </p>
-      </div>
+        <div className="pedidos-layout">
+          <section className="pedidos-panel pedidos-main">
+            <div className="pedidos-panel-head">
+              <div>
+                <h2>Catálogo de productos</h2>
+                <span>{productos.length} productos disponibles</span>
+              </div>
+              <strong>{productosSeleccionados} seleccionados</strong>
+            </div>
 
-      {clienteBloqueado && (
-        <div className="mensaje" style={{ background: '#F6D7CD', color: '#8A2E16', marginBottom: '1rem' }}>
-          Tu cuenta está bloqueada. No puedes aceptar pedidos en este momento.
+            {clienteBloqueado && (
+              <div className="pedidos-alert pedidos-alert-danger">
+                Tu cuenta está bloqueada. No puedes realizar pedidos en este momento.
+              </div>
+            )}
+
+            {!clienteBloqueado && evaluacionPedido && !evaluacionPedido.aceptado && totalGeneral > 0 && (
+              <div className="pedidos-alert pedidos-alert-warn">
+                {evaluacionPedido.motivo}
+              </div>
+            )}
+
+            <div className="pedidos-table-wrap">
+              <table className="pedidos-table">
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th className="pedidos-num">Cantidad</th>
+                    <th className="pedidos-num">Precio unitario</th>
+                    <th className="pedidos-num">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productos.map((producto) => {
+                    const cantidad = cantidades[producto.id] || 0;
+                    return (
+                      <tr
+                        key={producto.id}
+                        className={cantidad > 0 ? 'is-selected' : ''}
+                      >
+                        <td>
+                          <strong>{producto.nombre}</strong>
+                        </td>
+                        <td className="pedidos-num">
+                          <input
+                            type="text"
+                            value={cantidad === 0 ? '' : cantidad}
+                            onChange={(e) => handleCantidadChange(producto.id, e.target.value)}
+                            placeholder="0"
+                            className="pedidos-cantidad"
+                            aria-label={`Cantidad de ${producto.nombre}`}
+                          />
+                        </td>
+                        <td className="pedidos-num pedidos-money">
+                          {CLP.format(Number(producto.precio_unitario ?? 0))}
+                        </td>
+                        <td className="pedidos-num pedidos-money pedidos-subtotal">
+                          {CLP.format(calcularSubtotal(producto))}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="pedidos-observaciones">
+              <label htmlFor="observaciones">Observaciones generales</label>
+              <textarea
+                id="observaciones"
+                value={observaciones}
+                onChange={(e) => setObservaciones(e.target.value)}
+                rows="3"
+                placeholder="Ej: Entregar con hielo, factura, etc."
+              />
+            </div>
+          </section>
+
+          <aside className="pedidos-side">
+            <section className="pedidos-panel pedidos-summary">
+              <div className="pedidos-panel-head">
+                <div>
+                  <h2>Resumen</h2>
+                  <span>{fechaPedido}</span>
+                </div>
+              </div>
+
+              <div className="pedidos-total">
+                <span>Total del pedido</span>
+                <strong>{CLP.format(totalGeneral)}</strong>
+              </div>
+
+              <div className="pedidos-summary-list">
+                <div>
+                  <span>Productos</span>
+                  <strong>{productosSeleccionados}</strong>
+                </div>
+                <div>
+                  <span>Unidades</span>
+                  <strong>{unidadesSeleccionadas}</strong>
+                </div>
+                <div>
+                  <span>Deuda proyectada</span>
+                  <strong>{CLP.format(deudaProyectada)}</strong>
+                </div>
+              </div>
+
+              <div className="pedidos-credit">
+                <div className="pedidos-credit-head">
+                  <span>Uso de crédito</span>
+                  <strong>{CLP.format(creditoDisponible)} disponible</strong>
+                </div>
+                <div className="pedidos-credit-bar" aria-hidden="true">
+                  <span style={{ width: `${usoCredito}%` }} />
+                </div>
+                <div className="pedidos-credit-values">
+                  <span>{CLP.format(deudaActual)}</span>
+                  <span>{CLP.format(limiteDeuda)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleAceptarPedido}
+                className="submit-btn pedidos-submit"
+                disabled={botonDeshabilitado}
+              >
+                {clienteBloqueado
+                  ? 'Cuenta bloqueada'
+                  : enviando
+                    ? 'Procesando...'
+                    : 'Realizar pedido'}
+              </button>
+
+              {mensaje && <div className="mensaje pedidos-mensaje">{mensaje}</div>}
+            </section>
+
+            <section className="pedidos-panel pedidos-client">
+              <div className="pedidos-panel-head">
+                <div>
+                  <h2>Cliente</h2>
+                  <span>{clienteActualizado?.rut || 'Sin RUT'}</span>
+                </div>
+              </div>
+
+              <dl className="pedidos-client-data">
+                <div>
+                  <dt>Nombre</dt>
+                  <dd>{nombreCliente}</dd>
+                </div>
+                <div>
+                  <dt>Correo</dt>
+                  <dd>{clienteActualizado?.correo || 'Sin correo'}</dd>
+                </div>
+                <div>
+                  <dt>Deuda actual</dt>
+                  <dd>{CLP.format(deudaActual)}</dd>
+                </div>
+                <div>
+                  <dt>Límite</dt>
+                  <dd>{CLP.format(limiteDeuda)}</dd>
+                </div>
+              </dl>
+            </section>
+          </aside>
         </div>
-      )}
+      </main>
 
-      {!clienteBloqueado && evaluacionPedido && !evaluacionPedido.aceptado && totalGeneral > 0 && (
-        <div className="mensaje" style={{ background: 'var(--color-lime)', color: 'var(--color-teal)', marginBottom: '1rem' }}>
-          {evaluacionPedido.motivo}
-        </div>
-      )}
-
-      <div className="tabla-pedido">
-        <table>
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Precio</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productos.map((producto) => (
-              <tr key={producto.id}>
-                <td>{producto.nombre}</td>
-                <td>
-                  <input
-                    type="text"
-                    value={cantidades[producto.id] === 0 ? '' : cantidades[producto.id]}
-                    onChange={(e) => handleCantidadChange(producto.id, e.target.value)}
-                    placeholder="0"
-                    className="cantidad-input"
-                  />
-                </td>
-                <td className="precio-columna">${calcularSubtotal(producto).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colSpan="2" style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                Total general:
-              </td>
-              <td style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
-                ${totalGeneral.toLocaleString()}
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="observaciones">Observaciones generales (opcional):</label>
-        <textarea
-          id="observaciones"
-          value={observaciones}
-          onChange={(e) => setObservaciones(e.target.value)}
-          rows="3"
-          placeholder="Ej: Entregar con hielo, factura, etc."
-        />
-      </div>
-
-      {!clienteBloqueado && (
-        <button
-          onClick={handleAceptarPedido}
-          className="submit-btn"
-          disabled={botonDeshabilitado}
-        >
-          {enviando ? 'Procesando...' : 'Aceptar pedido'}
-        </button>
-      )}
-
-      {mensaje && <div className="mensaje">{mensaje}</div>}
-    </div>
+      {/* Botón flotante de solicitud de crédito (notifica al administrador) */}
+      <SolicitarCredito cliente={clienteActualizado} />
+    </>
   );
 }

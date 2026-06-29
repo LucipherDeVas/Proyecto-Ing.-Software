@@ -5,12 +5,14 @@ import { useAuth, AuthProvider } from './context/AuthContext';
 import PedidosForm from './pages/pedidosForm';
 import ProductosForm from './pages/productosForm';
 import Inicio from './pages/inicio';
-// import RegistroCliente from './pages/RegistroCliente'; // ya no se usa aquí
-import ListaClientes from './pages/ListaClientes'; // nuevo componente
+import ListaClientes from './pages/ListaClientes';
 import DashboardClientesDeuda from './pages/DashboardClientesDeuda';
+import NotificacionesAdmin from './pages/NotificacionesAdmin';
+import GestionPedidos from './pages/GestionPedidos';
 import ReporteContable from './pages/ReporteContable';
 import Login from './pages/login';
-import Register from './pages/RegistroCliente'; // para el registro autónomo
+import Register from './pages/RegistroCliente';
+import CambiarPassword from './pages/CambiarPassword';
 import './App.css';
 
 // Componente interno para la sección de clientes (con toggle)
@@ -34,7 +36,7 @@ function ClientesSection() {
 
 // Componente principal que decide qué mostrar según autenticación
 function AppContent() {
-  const { session, cliente, signOut, cargando } = useAuth();
+  const { session, cliente, signOut, cargando, esAdmin } = useAuth();
 
   if (cargando) {
     return <div className="form-container">Cargando sesión...</div>;
@@ -56,18 +58,29 @@ function AppContent() {
 
   return (
     <>
-      {/* Nav superior — restyling visual al sistema "Floema" (clases en App.css).
+      {/* Notificaciones en vivo (toast + sonido) para el admin, activas en
+          toda la app independientemente de la vista actual. */}
+      {esAdmin && <NotificacionesAdmin />}
+
+      {/* Nav superior.
           Rutas, handlers y textos SIN CAMBIOS; solo se reemplazan los
           estilos inline por classNames de presentación. */}
       <nav className="topnav">
         <div className="topnav-group">
           <Link className="topnav-link" to="/">Inicio</Link>
           <Link className="topnav-link" to="/pedidos">Pedidos</Link>
-          <Link className="topnav-link" to="/productos">Productos</Link>
-          <Link className="topnav-link" to="/clientes">Clientes</Link>
-          <Link className="topnav-link" to="/reportes">Reportes</Link>
+          {/* Vistas de administración: solo visibles para rol admin */}
+          {esAdmin && (
+            <>
+              <Link className="topnav-link" to="/gestion-pedidos">Gestión pedidos</Link>
+              <Link className="topnav-link" to="/productos">Productos</Link>
+              <Link className="topnav-link" to="/clientes">Clientes</Link>
+              <Link className="topnav-link" to="/reportes">Reportes</Link>
+            </>
+          )}
         </div>
-        <div>
+        <div className="topnav-cuenta">
+          <Link className="topnav-link" to="/cambiar-password">Cambiar contraseña</Link>
           <button onClick={signOut} className="topnav-logout">
             Cerrar sesión {nombreMostrar}
           </button>
@@ -77,9 +90,12 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Inicio />} />
         <Route path="/pedidos" element={<PedidosForm />} />
-        <Route path="/productos" element={<ProductosForm />} />
-        <Route path="/clientes" element={<ClientesSection />} />
-        <Route path="/reportes" element={<ReporteContable />} />
+        <Route path="/cambiar-password" element={<CambiarPassword />} />
+        {/* Rutas de administración protegidas por rol */}
+        <Route path="/gestion-pedidos" element={esAdmin ? <GestionPedidos /> : <Navigate to="/" replace />} />
+        <Route path="/productos" element={esAdmin ? <ProductosForm /> : <Navigate to="/" replace />} />
+        <Route path="/clientes" element={esAdmin ? <ClientesSection /> : <Navigate to="/" replace />} />
+        <Route path="/reportes" element={esAdmin ? <ReporteContable /> : <Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

@@ -1,14 +1,3 @@
-/* ============================================================
-   index.css — BASE GLOBAL + DESIGN TOKENS
-   Sistema de diseño "Floema" aplicado desde guia_web/
-   (variablescss.txt + css.txt + tipografy.txt + grid.txt)
-
-   NOTA: solo se cambian variables, tipografía y base visual.
-   No se modifica ninguna lógica, clase de negocio ni markup.
-   ============================================================ */
-
-/* Tipografía del sistema. Zimula es propietaria; DM Sans es la
-   alternativa de Google Fonts indicada en la guía (tipografy.txt). */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
 
 :root {
@@ -115,8 +104,7 @@ code {
     monospace;
 }
 
-/* ── Headings: todos en weight 400 con letter-spacing negativo
-      (la clave del look elegante, según tipografy.txt) ────── */
+/* ── Headings: todos en weight 400 con letter-spacing negativo ────── */
 h1, h2, h3, h4 {
   font-weight: var(--fw-regular);
   line-height: var(--lh-tight);
